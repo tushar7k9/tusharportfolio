@@ -1,0 +1,35 @@
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* scroll-snap-type: y mandatory; */
+  scroll-behavior: smooth;
+}
+
+.app {
+  width: 100%;
+}
+
+.page-section {
+  width: 100%;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  #root {
+    scroll-behavior: auto;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  #root {
+    -webkit-overflow-scrolling: touch;
+  }
+}

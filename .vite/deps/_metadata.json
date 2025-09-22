@@ -1,0 +1,25 @@
+{
+  "hash": "9ba90740",
+  "configHash": "21e5992e",
+  "lockfileHash": "6f92955e",
+  "browserHash": "fcb739a2",
+  "optimized": {
+    "react": {
+      "src": "../../../tusharportfolio/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "f82552a3",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../../tusharportfolio/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "6ffe6103",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-M7AKGMY5": {
+      "file": "chunk-M7AKGMY5.js"
+    }
+  }
+}
