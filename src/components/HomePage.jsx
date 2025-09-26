@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DraggableLetter from './DraggableLetter';
+import GlossyLetters3D from './GlossyLetters3D';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -261,7 +262,11 @@ const HomePage = () => {
 
       {/* Main Content */}
       <div className="main-content">
-        <div className="letters-container">
+        {/* 3D Glossy Letters Background */}
+        <GlossyLetters3D letters={name} />
+
+        {/* Keep old letters hidden but available for fallback */}
+        <div className="letters-container" style={{ display: 'none' }}>
           {name.split("").map((letter, index) => {
             const initialPos = getInitialPosition(index);
             return (
@@ -277,7 +282,7 @@ const HomePage = () => {
           })}
         </div>
 
-        <div className="tagline">
+        <div className="tagline" style={{ position: 'relative', zIndex: 10 }}>
           <h3>MORE THAN CODE</h3>
           <h3>
             &minus; IT'S{" "}
