@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import LaserFlow from './LaserFlow';
+import Terminal from './Terminal';
 import './About.css';
+import leetcodeBg from '../images/leetcode_about_page_bg.png';
 
 const About = () => {
   const revealImgRef = useRef(null);
@@ -71,13 +73,20 @@ const About = () => {
         {/* Interactive Reveal Effect */}
         <img
           ref={revealImgRef}
-          src="./images/leetcode_about_page_bg.png"
+          src={leetcodeBg}
           className="laser-reveal-overlay"
           style={{
             "--mx": "-9999px",
             "--my": "-9999px",
           }}
         />
+      </div>
+
+      {/* Terminal directly below laser — no gap, laser appears to fall onto it */}
+      <div className="terminal-section">
+        <div className="terminal-wrapper">
+          <Terminal />
+        </div>
       </div>
     </div>
   );

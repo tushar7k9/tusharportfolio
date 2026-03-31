@@ -611,4 +611,23 @@
     height: calc(100vh - 200px);
     min-height: 350px;
   }
+
+  .terminal-section {
+    padding: 0 16px 60px;
+  }
+}
+
+/* Terminal Section — flush below laser, no gap */
+.terminal-section {
+  position: relative;
+  background: #000000;
+  margin-top: -302px; /* eliminate any sub-pixel gap */
+  padding: 0 20px 80px;
+  z-index: 6;
+}
+
+.terminal-wrapper {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
 }

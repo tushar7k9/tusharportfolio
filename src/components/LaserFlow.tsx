@@ -23,6 +23,7 @@ type Props = {
   falloffStart?: number;
   fogFallSpeed?: number;
   color?: string;
+  alpha?: boolean;
 };
 
 const VERT = `
@@ -281,7 +282,8 @@ export const LaserFlow: React.FC<Props> = ({
   decay = 1.1,
   falloffStart = 1.2,
   fogFallSpeed = 0.6,
-  color = '#FF79C6'
+  color = '#FF79C6',
+  alpha: alphaMode = false
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -312,11 +314,11 @@ export const LaserFlow: React.FC<Props> = ({
     const mount = mountRef.current!;
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
-      alpha: false,
+      alpha: alphaMode,
       depth: false,
       stencil: false,
       powerPreference: 'high-performance',
-      premultipliedAlpha: false,
+      premultipliedAlpha: alphaMode,
       preserveDrawingBuffer: false,
       failIfMajorPerformanceCaveat: false,
       logarithmicDepthBuffer: false
@@ -329,7 +331,7 @@ export const LaserFlow: React.FC<Props> = ({
     renderer.setPixelRatio(currentDprRef.current);
     renderer.shadowMap.enabled = false;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 1);
+    renderer.setClearColor(0x000000, alphaMode ? 0 : 1);
     const canvas = renderer.domElement;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
@@ -372,7 +374,7 @@ export const LaserFlow: React.FC<Props> = ({
       vertexShader: VERT,
       fragmentShader: FRAG,
       uniforms,
-      transparent: false,
+      transparent: alphaMode,
       depthTest: false,
       depthWrite: false,
       blending: THREE.NormalBlending
