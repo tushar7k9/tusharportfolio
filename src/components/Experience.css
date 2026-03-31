@@ -1,20 +1,32 @@
 /* ============================
-   Experience Section
+   Experience Section — Dark Sketch Flip Cards
    ============================ */
 
+/* Outer container — tall to give scroll distance */
 .experience-page {
-  min-height: 100vh;
+  height: 200vh;
   background: #000000;
   color: #ffffff;
-  overflow-x: hidden;
+  overflow: visible;
   position: relative;
+}
+
+/* Inner sticky viewport — pins while user scrolls */
+.experience-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 100px 50px 80px;
 }
 
 /* Header */
 .experience-header {
   text-align: center;
-  margin-bottom: 80px;
+  margin-bottom: 60px;
 }
 
 .experience-section-title {
@@ -33,7 +45,7 @@
   transform: translateY(50px);
 }
 
-.experience-page.animate-in .experience-section-title .title-line {
+.experience-sticky.animate-in .experience-section-title .title-line {
   animation: expTitleSlideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
@@ -56,220 +68,442 @@
   opacity: 0;
 }
 
-.experience-page.animate-in .experience-subtitle {
+.experience-sticky.animate-in .experience-subtitle {
   animation: expTitleSlideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
 }
 
 @keyframes expTitleSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Timeline Container */
-.exp-timeline-container {
+/* Card Stack Container */
+.exp-stack-container {
   position: relative;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px 0;
-}
-
-/* Center line */
-.exp-timeline-line {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.06);
-  transform: translateX(-50%);
-}
-
-.exp-timeline-progress {
-  position: absolute;
-  top: 0;
   width: 100%;
-  height: 0;
-  background: linear-gradient(180deg, #4ecdc4, #ff6b6b);
-  border-radius: 1px;
+  max-width: 540px;
+  height: 540px;
+  margin: 0 auto;
+  outline: none;
+  perspective: 1200px;
 }
 
-.experience-page.animate-in .exp-timeline-progress {
-  animation: expProgressGrow 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
-}
-
-@keyframes expProgressGrow {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 100%;
-  }
-}
-
-/* Timeline Item */
-.exp-timeline-item {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  margin: 70px 0;
-  opacity: 0;
-  transform: translateX(-60px);
-  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.exp-timeline-item:nth-child(even) {
-  flex-direction: row-reverse;
-  transform: translateX(60px);
-}
-
-.exp-timeline-item.in-view {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Marker */
-.exp-timeline-marker {
+/* ---- Card Wrapper (handles drag + flip) ---- */
+.exp-card-wrapper {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 64px;
-  height: 64px;
-  background: var(--item-color, #4ecdc4);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.3);
-  flex-shrink: 0;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: center bottom;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.exp-timeline-item:hover .exp-timeline-marker {
-  transform: translateX(-50%) scale(1.15);
+.exp-card-wrapper.top-card {
+  cursor: grab;
 }
 
-.exp-timeline-item.in-view .exp-timeline-marker {
-  animation: expMarkerPulse 2.5s ease-in-out infinite;
+.exp-card-wrapper.top-card:active {
+  cursor: grabbing;
 }
 
-@keyframes expMarkerPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 0 15px rgba(78, 205, 196, 0);
-  }
+/* Flip transition */
+.exp-card-wrapper.flipped {
+  animation: none;
 }
 
-.exp-timeline-year {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #000000;
-  letter-spacing: 0.03em;
+.exp-card-wrapper.flipped .exp-card-front {
+  transform: rotateY(-180deg);
 }
 
-/* Content Card */
-.exp-timeline-content {
-  flex: 1;
-  max-width: 400px;
-  padding: 28px;
-  margin: 0 60px;
-  background: rgba(13, 17, 23, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.exp-card-wrapper.flipped .exp-card-back {
+  transform: rotateY(0deg);
 }
 
-.exp-timeline-item:hover .exp-timeline-content {
-  border-color: var(--item-color);
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.02);
+/* Behind cards */
+.exp-card-wrapper.behind {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
 }
 
-.exp-timeline-item:nth-child(even) .exp-timeline-content {
-  text-align: right;
+/* Drag states */
+.exp-card-wrapper.dragging {
+  transition: none !important;
 }
 
-.exp-timeline-item:nth-child(even) .exp-timeline-bullets {
-  padding-left: 0;
-  padding-right: 18px;
-  list-style-position: inside;
+.exp-card-wrapper.snap-back {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
-.exp-timeline-badge {
+.exp-card-wrapper.swipe-left {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.35s ease !important;
+  transform: translateX(-150%) rotate(-30deg) !important;
+  opacity: 0 !important;
+}
+
+.exp-card-wrapper.swipe-right {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.35s ease !important;
+  transform: translateX(150%) rotate(30deg) !important;
+  opacity: 0 !important;
+}
+
+/* ---- Card Face (shared front + back) ---- */
+.exp-card {
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  padding: 32px 30px;
+  box-sizing: border-box;
+  font-family: 'Kalam', cursive;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-y: auto;
+  filter: url(#sketch-filter);
+}
+
+/* Sketchy inner border */
+.exp-card::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 2px dashed rgba(255, 255, 255, 0.04);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Colored accent stroke at top */
+.exp-card::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  width: 60px;
+  height: 3px;
+  background: var(--card-color);
+  border-radius: 2px;
+  opacity: 0.8;
+  transform: rotate(-1deg);
+}
+
+/* Front face — default visible */
+.exp-card-front {
+  transform: rotateY(0deg);
+}
+
+/* Back face — initially hidden */
+.exp-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Hover on top card */
+.exp-card-wrapper.top-card:hover .exp-card {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Front Face Content ---- */
+
+.exp-card-year {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+  margin-top: 10px;
+}
+
+.exp-card-timeline {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 10px;
+  margin-top: 10px;
+  letter-spacing: 0.08em;
+}
+
+.exp-card-badge {
   display: inline-block;
-  background: var(--item-color, #4ecdc4);
-  color: #000000;
-  padding: 4px 14px;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  background: transparent;
+  color: var(--card-color);
+  padding: 2px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 1.2rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  border-bottom: 2px solid var(--card-color);
+  border-radius: 0;
+  text-transform: none;
 }
 
-.exp-timeline-title {
-  font-size: 1.4rem;
-  font-weight: 300;
+.exp-card-role {
+  font-family: 'Kalam', cursive;
+  font-size: 2rem;
+  font-weight: 700;
   margin: 8px 0 12px;
   color: #ffffff;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
-.exp-timeline-description {
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 300;
-  line-height: 1.7;
-  margin: 0 0 16px;
-  font-size: 0.95rem;
+/* Hand-drawn divider under role */
+.exp-card-role::after {
+  content: '';
+  display: block;
+  width: 80%;
+  height: 1px;
+  margin-top: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0px,
+    rgba(255, 255, 255, 0.15) 6px,
+    transparent 6px,
+    transparent 10px
+  );
 }
 
-.exp-timeline-bullets {
+.exp-card-desc {
+  font-family: 'Kalam', cursive;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.15rem;
+  margin: 0 0 14px;
+}
+
+.exp-card-bullets {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 4px;
   list-style: none;
 }
 
-.exp-timeline-bullets li {
+.exp-card-bullets li {
+  font-family: 'Kalam', cursive;
   color: rgba(255, 255, 255, 0.5);
-  font-weight: 300;
-  line-height: 1.6;
-  font-size: 0.88rem;
-  margin-bottom: 6px;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
   position: relative;
-  padding-left: 14px;
+  padding-left: 22px;
 }
 
-.exp-timeline-bullets li::before {
-  content: '▹';
+.exp-card-bullets li::before {
+  content: '~>';
   position: absolute;
   left: 0;
-  color: var(--item-color, #4ecdc4);
+  color: var(--card-color);
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
-.exp-timeline-item:nth-child(even) .exp-timeline-bullets li {
-  padding-left: 0;
-  padding-right: 14px;
+/* Flip hint */
+.exp-card-flip-hint {
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  font-family: 'Kalam', cursive;
+  font-size: 0.9rem;
+  color: var(--card-color);
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+  animation: hintBlink 2.5s ease-in-out infinite;
 }
 
-.exp-timeline-item:nth-child(even) .exp-timeline-bullets li::before {
-  position: static;
-  margin-right: 6px;
+@keyframes hintBlink {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
 }
 
-/* Responsive -- Tablet */
+/* ---- Back Face Content ---- */
+
+.exp-card-back-label {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--card-color);
+  margin-top: 14px;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+  position: relative;
+}
+
+.exp-card-back-label:first-child {
+  margin-top: 10px;
+}
+
+/* Underline scribble under label */
+.exp-card-back-label::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--card-color) 0px,
+    var(--card-color) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  opacity: 0.3;
+}
+
+/* Tech stack tags */
+.exp-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.exp-card-tag {
+  font-family: 'Kalam', cursive;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  padding: 3px 10px;
+  letter-spacing: 0.02em;
+}
+
+/* Achievements list */
+.exp-card-achievements {
+  margin: 0 0 4px;
+  padding-left: 4px;
+  list-style: none;
+}
+
+.exp-card-achievements li {
+  font-family: 'Kalam', cursive;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.05rem;
+  margin-bottom: 3px;
+  position: relative;
+  padding-left: 22px;
+}
+
+.exp-card-achievements li::before {
+  content: '\2605';
+  position: absolute;
+  left: 0;
+  color: var(--card-color);
+  font-size: 0.85rem;
+}
+
+/* ---- Drag Hints ---- */
+.exp-drag-hints {
+  position: absolute;
+  top: 50%;
+  left: -50px;
+  right: -50px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  transform: translateY(-50%);
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.exp-drag-hints.visible {
+  opacity: 1;
+}
+
+.exp-drag-hint {
+  font-family: 'Kalam', cursive;
+  font-size: 1.8rem;
+  color: rgba(255, 255, 255, 0.1);
+}
+
+.exp-drag-hint.hint-left {
+  animation: hintPulseLeft 2.5s ease-in-out infinite;
+}
+
+.exp-drag-hint.hint-right {
+  animation: hintPulseRight 2.5s ease-in-out infinite;
+}
+
+@keyframes hintPulseLeft {
+  0%, 100% { opacity: 0.1; transform: translateX(0); }
+  50% { opacity: 0.3; transform: translateX(-6px); }
+}
+
+@keyframes hintPulseRight {
+  0%, 100% { opacity: 0.1; transform: translateX(0); }
+  50% { opacity: 0.3; transform: translateX(6px); }
+}
+
+/* ---- Counter & Dots ---- */
+.exp-card-counter {
+  text-align: center;
+  margin-top: 30px;
+  font-family: 'Kalam', cursive;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.08em;
+  opacity: 0;
+}
+
+.exp-card-counter.visible {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.exp-card-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  opacity: 0;
+}
+
+.exp-card-dots.visible {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.exp-card-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.exp-card-dot.active {
+  background: var(--card-color);
+  box-shadow: 0 0 10px var(--card-color);
+  transform: scale(1.3);
+}
+
+/* ---- Responsive — Tablet ---- */
 @media (max-width: 768px) {
   .experience-page {
+    height: 180vh;
+  }
+
+  .experience-sticky {
     padding: 80px 25px 60px;
   }
 
@@ -281,60 +515,32 @@
     font-size: 1rem;
   }
 
-  /* Switch to left-aligned single column */
-  .exp-timeline-line {
-    left: 32px;
+  .exp-stack-container {
+    max-width: 440px;
+    height: 500px;
   }
 
-  .exp-timeline-item,
-  .exp-timeline-item:nth-child(even) {
-    flex-direction: row;
-    padding-left: 80px;
-    transform: translateX(-30px);
+  .exp-card {
+    padding: 26px 24px;
   }
 
-  .exp-timeline-item.in-view {
-    transform: translateX(0);
+  .exp-card-role {
+    font-size: 1.7rem;
   }
 
-  .exp-timeline-marker {
-    left: 32px;
-    width: 50px;
-    height: 50px;
-  }
-
-  .exp-timeline-content,
-  .exp-timeline-item:nth-child(even) .exp-timeline-content {
-    max-width: 100%;
-    margin: 0;
-    text-align: left;
-  }
-
-  .exp-timeline-item:nth-child(even) .exp-timeline-bullets {
-    padding-left: 18px;
-    padding-right: 0;
-    list-style-position: outside;
-  }
-
-  .exp-timeline-item:nth-child(even) .exp-timeline-bullets li {
-    padding-left: 14px;
-    padding-right: 0;
-  }
-
-  .exp-timeline-item:nth-child(even) .exp-timeline-bullets li::before {
-    position: absolute;
-    left: 0;
-    margin-right: 0;
-  }
-
-  .exp-timeline-year {
-    font-size: 0.75rem;
+  .exp-drag-hints {
+    left: -30px;
+    right: -30px;
   }
 }
 
-/* Responsive -- Mobile */
+/* ---- Responsive — Mobile ---- */
 @media (max-width: 480px) {
   .experience-page {
+    height: 160vh;
+  }
+
+  .experience-sticky {
     padding: 60px 16px 50px;
   }
 
@@ -343,21 +549,66 @@
     letter-spacing: 0.1em;
   }
 
-  .exp-timeline-item,
-  .exp-timeline-item:nth-child(even) {
-    padding-left: 70px;
-    margin: 50px 0;
+  .experience-header {
+    margin-bottom: 40px;
   }
 
-  .exp-timeline-content {
-    padding: 20px;
+  .exp-stack-container {
+    max-width: 100%;
+    height: auto;
+    min-height: 420px;
   }
 
-  .exp-timeline-title {
-    font-size: 1.2rem;
+  .exp-card {
+    padding: 20px 18px;
+    position: relative;
   }
 
-  .exp-timeline-description {
-    font-size: 0.88rem;
+  .exp-card-wrapper.behind .exp-card {
+    position: absolute;
+  }
+
+  .exp-card-role {
+    font-size: 1.5rem;
+  }
+
+  .exp-card-desc {
+    font-size: 1rem;
+  }
+
+  .exp-card-bullets li {
+    font-size: 0.95rem;
+  }
+
+  .exp-card-tag {
+    font-size: 0.85rem;
+    padding: 2px 8px;
+  }
+
+  .exp-drag-hints {
+    display: none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .exp-card-wrapper,
+  .exp-card-wrapper.behind,
+  .exp-card-wrapper.snap-back,
+  .exp-card-wrapper.swipe-left,
+  .exp-card-wrapper.swipe-right {
+    transition-duration: 0.01s !important;
+  }
+
+  .exp-card {
+    transition-duration: 0.01s !important;
+  }
+
+  .exp-drag-hint {
+    animation: none;
+  }
+
+  .exp-card-flip-hint {
+    animation: none;
   }
 }
