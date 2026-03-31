@@ -20,6 +20,10 @@
   scroll-snap-stop: always;
 }
 
+.page-section:last-child {
+  min-height: auto;
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   #root {
