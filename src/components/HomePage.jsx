@@ -118,11 +118,17 @@ const HomePage = () => {
   const handleNavigation = (path) => {
     closeMenu();
 
-    if (path === '/about') {
-      // Scroll to About section (second page-section)
-      const aboutSection = document.querySelectorAll('.page-section')[1];
-      if (aboutSection) {
-        aboutSection.scrollIntoView({ behavior: 'smooth' });
+    const sectionMap = {
+      '/about': 1,
+      '/skills': 2,
+      '/experience': 3,
+    };
+
+    const index = sectionMap[path];
+    if (index !== undefined) {
+      const section = document.querySelectorAll('.page-section')[index];
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };

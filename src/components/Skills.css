@@ -1,0 +1,431 @@
+/* ============================
+   Skills Section — 3D Sphere Word Cloud
+   Scroll-driven: header fades, filters stick, sphere grows
+   ============================ */
+
+/* Outer container — tall to give scroll distance */
+.skills-page {
+  height: 250vh;
+  background: #000000;
+  color: #ffffff;
+  overflow: visible;
+  position: relative;
+}
+
+/* Inner sticky viewport — pins while user scrolls through outer */
+.skills-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 50px 40px;
+}
+
+/* Header */
+.skills-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 2;
+  transition: opacity 0.05s linear, transform 0.05s linear;
+}
+
+.skills-section-title {
+  font-size: 4rem;
+  font-weight: 100;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  letter-spacing: 0.2em;
+}
+
+.skills-section-title .title-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.skills-sticky.animate-in .skills-section-title .title-line {
+  animation: skillTitleUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.skills-section-title .title-line:first-child {
+  animation-delay: 0.2s;
+}
+
+.skills-section-title .title-highlight {
+  color: #4ecdc4;
+  font-weight: 300;
+  animation-delay: 0.5s;
+}
+
+.skills-subtitle {
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.05em;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.05s linear;
+}
+
+.skills-sticky.animate-in .skills-subtitle {
+  animation: skillTitleUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
+}
+
+@keyframes skillTitleUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Category Filters */
+.skills-filters {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 3;
+  opacity: 0;
+  transition: transform 0.1s ease-out;
+  transform-origin: center top;
+}
+
+/* Entrance: use transition (not animation) so inline transform isn't overridden */
+.skills-sticky.animate-in .skills-filters {
+  opacity: 1;
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s;
+}
+
+
+.filter-btn {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.8rem;
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  letter-spacing: 0.05em;
+}
+
+.filter-btn:hover {
+  border-color: var(--filter-color);
+  color: var(--filter-color);
+}
+
+.filter-btn.active {
+  border-color: var(--filter-color);
+  color: var(--filter-color);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05), inset 0 0 15px rgba(255, 255, 255, 0.02);
+}
+
+/* 3D Sphere Container */
+.sphere-cloud {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  height: 55vh;
+  min-height: 400px;
+  z-index: 2;
+  cursor: grab;
+  flex-shrink: 0;
+  transition: transform 0.1s ease-out;
+  transform-origin: center center;
+}
+
+.sphere-cloud:active {
+  cursor: grabbing;
+}
+
+/* Plasma core — subtle white/silver glow */
+.sphere-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(220, 225, 235, 0.15) 40%,
+    transparent 70%
+  );
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.15),
+    0 0 50px rgba(220, 225, 235, 0.08),
+    0 0 100px rgba(200, 210, 225, 0.04);
+  animation: plasmaPulse 3s ease-in-out infinite;
+}
+
+.sphere-glow::before {
+  content: '';
+  position: absolute;
+  inset: -25px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(220, 225, 235, 0.02) 40%,
+    transparent 65%
+  );
+  animation: plasmaOuter 4s ease-in-out infinite alternate;
+}
+
+.sphere-glow::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(240, 242, 248, 0.25) 50%,
+    transparent 70%
+  );
+  animation: plasmaInner 2s ease-in-out infinite alternate;
+}
+
+@keyframes plasmaPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow:
+      0 0 20px rgba(255, 255, 255, 0.15),
+      0 0 50px rgba(220, 225, 235, 0.08),
+      0 0 100px rgba(200, 210, 225, 0.04);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow:
+      0 0 25px rgba(255, 255, 255, 0.2),
+      0 0 60px rgba(220, 225, 235, 0.1),
+      0 0 110px rgba(200, 210, 225, 0.05);
+  }
+}
+
+@keyframes plasmaOuter {
+  0% { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes plasmaInner {
+  0% { opacity: 0.5; }
+  100% { opacity: 0.9; }
+}
+
+/* Lightning canvas */
+.lightning-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Word being shocked by lightning */
+.sphere-word.word-shocked {
+  color: rgba(235, 240, 250, 1) !important;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.6),
+    0 0 20px rgba(220, 230, 245, 0.35),
+    0 0 40px rgba(200, 215, 235, 0.15) !important;
+  filter: blur(0) !important;
+  opacity: 1 !important;
+}
+
+/* Orbit rings */
+.orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-ring-1 {
+  width: 55%;
+  height: 55%;
+  animation: orbitSpin 30s linear infinite;
+}
+
+.orbit-ring-2 {
+  width: 75%;
+  height: 75%;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.02);
+  animation: orbitSpin 45s linear infinite reverse;
+}
+
+.orbit-ring-3 {
+  width: 92%;
+  height: 92%;
+  animation: orbitSpin 60s linear infinite;
+}
+
+@keyframes orbitSpin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Individual word in sphere */
+.sphere-word {
+  position: absolute;
+  font-size: var(--base-size);
+  font-weight: 600;
+  color: rgba(220, 225, 235, 0.9);
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  will-change: left, top, opacity, transform, filter;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.03);
+  letter-spacing: 0.02em;
+}
+
+/* Dimmed when category filtered */
+.sphere-word.dimmed {
+  color: rgba(255, 255, 255, 0.04) !important;
+  text-shadow: none !important;
+}
+
+/* Hover — pure white glow */
+.sphere-word.word-hovered {
+  color: #ffffff !important;
+  text-shadow:
+    0 0 15px rgba(255, 255, 255, 0.6),
+    0 0 40px rgba(255, 255, 255, 0.25),
+    0 0 80px rgba(255, 255, 255, 0.1) !important;
+  filter: blur(0) !important;
+  opacity: 1 !important;
+}
+
+/* Tooltip */
+.sphere-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: tooltipPop 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.tooltip-level {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  display: block;
+}
+
+@keyframes tooltipPop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .skills-page {
+    height: 200vh;
+  }
+
+  .skills-sticky {
+    padding: 70px 25px 40px;
+  }
+
+  .skills-section-title {
+    font-size: 2.8rem;
+  }
+
+  .skills-subtitle {
+    font-size: 1rem;
+  }
+
+  .sphere-cloud {
+    height: 45vh;
+    min-height: 350px;
+    max-width: 500px;
+  }
+
+  .sphere-glow {
+    width: 200px;
+    height: 200px;
+  }
+
+  .skills-filters {
+    gap: 8px;
+  }
+
+  .filter-btn {
+    font-size: 0.72rem;
+    padding: 6px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-page {
+    height: 180vh;
+  }
+
+  .skills-sticky {
+    padding: 60px 16px 30px;
+  }
+
+  .skills-section-title {
+    font-size: 2.2rem;
+    letter-spacing: 0.1em;
+  }
+
+  .sphere-cloud {
+    height: 40vh;
+    min-height: 280px;
+  }
+
+  .sphere-word {
+    font-size: calc(var(--base-size) * 0.75) !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sphere-glow {
+    animation: none;
+  }
+
+  .orbit-ring {
+    animation: none;
+  }
+}
