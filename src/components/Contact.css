@@ -353,10 +353,6 @@
 
 /* ---- Responsive — Tablet ---- */
 @media (max-width: 768px) {
-  .contact-page {
-    height: 160vh;
-  }
-
   .contact-sticky {
     padding: 70px 25px 40px;
   }
@@ -385,10 +381,6 @@
 
 /* ---- Responsive — Mobile ---- */
 @media (max-width: 480px) {
-  .contact-page {
-    height: 150vh;
-  }
-
   .contact-sticky {
     padding: 60px 16px 30px;
   }

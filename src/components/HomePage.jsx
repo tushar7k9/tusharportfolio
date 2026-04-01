@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import DraggableLetter from './DraggableLetter';
 import GlossyLetters3D from './GlossyLetters3D';
+import homePreview from '../assets/previews/home.png';
+import aboutPreview from '../assets/previews/about.png';
+import skillsPreview from '../assets/previews/skills.png';
+import experiencePreview from '../assets/previews/experience.png';
+import contactPreview from '../assets/previews/contact.png';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -19,7 +24,8 @@ const HomePage = () => {
 
   // Menu state
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeMenuItem, setActiveMenuItem] = useState(null);
+  const [isMenuClosing, setIsMenuClosing] = useState(false);
+  const [hoveredMenuItem, setHoveredMenuItem] = useState(null);
 
 
 
@@ -101,46 +107,57 @@ const HomePage = () => {
   }, [currentText, isTyping, currentWordIndex, loadingStage]);
 
 
+  const MENU_ITEMS = [
+    { id: 'home', label: 'HOME', desc: 'Welcome & Introduction', color: '#4ecdc4', sectionIndex: 0, preview: homePreview },
+    { id: 'about', label: 'ABOUT', desc: 'My journey, laser flow & terminal', color: '#9333ea', sectionIndex: 1, preview: aboutPreview },
+    { id: 'skills', label: 'SKILLS', desc: '3D sphere word cloud with lightning', color: '#4ecdc4', sectionIndex: 2, preview: skillsPreview },
+    { id: 'experience', label: 'EXPERIENCE', desc: 'Draggable sketch card stack', color: '#FF79C6', sectionIndex: 3, preview: experiencePreview },
+    { id: 'contact', label: 'CONTACT', desc: 'Floating cards & message form', color: '#ff6b6b', sectionIndex: 4, preview: contactPreview },
+    { id: 'resume', label: 'RESUME', desc: 'Download my CV', color: '#8b5cf6', action: 'download' },
+  ];
+
   const toggleMenu = () => {
-    setIsMenuOpen(prev => !prev);
-    setActiveMenuItem(null);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-    setActiveMenuItem(null);
-  };
-
-  const handleMenuItemHover = (item) => {
-    setActiveMenuItem(item);
-  };
-
-  const handleNavigation = (path) => {
-    closeMenu();
-
-    const sectionMap = {
-      '/about': 1,
-      '/skills': 2,
-      '/experience': 3,
-    };
-
-    const index = sectionMap[path];
-    if (index !== undefined) {
-      const section = document.querySelectorAll('.page-section')[index];
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
+    if (isMenuOpen) {
+      closeMenu();
+    } else {
+      setIsMenuOpen(true);
+      setIsMenuClosing(false);
+      setHoveredMenuItem(null);
     }
   };
 
-  const menuItems = [
-    { id: 'about', label: 'ABOUT', description: 'Discover my journey', icon: '◐', path: '/about' },
-    { id: 'work', label: 'WORK', description: 'Portfolio & Projects', icon: '◗', path: '/work' },
-    { id: 'skills', label: 'SKILLS', description: 'Technical expertise', icon: '◑', path: '/skills' },
-    { id: 'experience', label: 'EXPERIENCE', description: 'Professional path', icon: '◒', path: '/experience' },
-    { id: 'contact', label: 'CONTACT', description: 'Let\'s connect', icon: '◔', path: '/contact' },
-    { id: 'resume', label: 'RESUME', description: 'Download CV', icon: '◕', path: '/resume' }
-  ];
+  const closeMenu = () => {
+    setIsMenuClosing(true);
+    setTimeout(() => {
+      setIsMenuOpen(false);
+      setIsMenuClosing(false);
+      setHoveredMenuItem(null);
+    }, 400);
+  };
+
+  // Escape key handler
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isMenuOpen && !isMenuClosing) {
+        closeMenu();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMenuOpen, isMenuClosing]);
+
+  const handleNavigation = (item) => {
+    if (item.action === 'download') {
+      // TODO: replace with actual resume URL
+      alert('Resume download coming soon!');
+      return;
+    }
+    closeMenu();
+    const section = document.querySelectorAll('.page-section')[item.sectionIndex];
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
 
   const getInitialPosition = (index) => {
@@ -298,7 +315,13 @@ const HomePage = () => {
           </h3>
         </div>
 
-        <div className="scroll-indicator">
+        <div
+          className="scroll-indicator"
+          onClick={() => {
+            const sections = document.querySelectorAll('.page-section');
+            if (sections[1]) sections[1].scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
           <div className="scroll-arrow">↓</div>
           <div className="scroll-text">Scroll to explore</div>
         </div>
@@ -317,90 +340,81 @@ const HomePage = () => {
         </a>
       </footer>
 
-      {/* Side Work Button */}
-      <div className="side-work-btn">
-        <span>W.</span>
-        <span className="work-text">WORK</span>
-      </div>
-
-      {/* Creative Menu Overlay */}
+      {/* Menu Overlay — Split Panel */}
       {isMenuOpen && (
-        <div className="menu-overlay" onClick={closeMenu}>
-          <div className="menu-background" onClick={(e) => e.stopPropagation()}>
-            <div className="menu-particles">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="particle"
-                  style={{
-                    '--delay': `${i * 0.1}s`,
-                    '--x': `${Math.random() * 100}%`,
-                    '--y': `${Math.random() * 100}%`
-                  }}
-                />
-              ))}
+        <div
+          className={`menu-overlay ${isMenuClosing ? 'closing' : ''}`}
+          onClick={closeMenu}
+        >
+          <div className="menu-panel" onClick={(e) => e.stopPropagation()}>
+            {/* Close button */}
+            <button className="menu-close-btn" onClick={closeMenu}>
+              <span className="close-icon">×</span>
+            </button>
+
+            {/* Header */}
+            <div className="menu-header">
+              <h2 className="menu-title">EXPLORE</h2>
+              <p className="menu-subtitle">Navigate through my world</p>
             </div>
 
-            <div className="menu-grid">
-              <div className="menu-content">
-                <div className="menu-header">
-                  <div className="menu-header-top">
-                    <h2 className="menu-title">EXPLORE</h2>
-                    <button className="menu-close-btn" onClick={closeMenu}>
-                      <span className="close-icon">×</span>
-                    </button>
-                  </div>
-                  <div className="menu-subtitle">Navigate through my world</div>
-                </div>
-
-                <div className="menu-items">
-                  {menuItems.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className={`menu-item ${activeMenuItem === item.id ? 'active' : ''}`}
-                      onMouseEnter={() => handleMenuItemHover(item.id)}
-                      onMouseLeave={() => handleMenuItemHover(null)}
-                      onClick={() => handleNavigation(item.path)}
-                      style={{ '--index': index }}
-                    >
-                      <div className="menu-item-icon">
-                        <span className="icon">{item.icon}</span>
-                      </div>
-                      <div className="menu-item-content">
-                        <h3 className="menu-item-label">{item.label}</h3>
-                        <p className="menu-item-description">{item.description}</p>
-                      </div>
-                      <div className="menu-item-arrow">
-                        <span>→</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="menu-footer">
-                  <div className="menu-footer-text">
-                    <span>Ready to build something amazing?</span>
-                  </div>
-                  <div className="menu-cta">
-                    <button className="cta-button" onClick={() => handleNavigation('/about')}>
-                      <span>Learn More</span>
-                      <span className="cta-icon">✦</span>
-                    </button>
-                  </div>
-                </div>
+            <div className="menu-split">
+              {/* Left — Menu Items */}
+              <div className="menu-left">
+                {MENU_ITEMS.map((item, index) => {
+                  const isResume = item.action === 'download';
+                  return (
+                    <React.Fragment key={item.id}>
+                      {isResume && <div className="menu-divider" />}
+                      <button
+                        className={`menu-item ${hoveredMenuItem === item.id ? 'hovered' : ''}`}
+                        style={{ '--index': index, '--accent': item.color }}
+                        onMouseEnter={() => setHoveredMenuItem(item.id)}
+                        onMouseLeave={() => setHoveredMenuItem(null)}
+                        onClick={() => handleNavigation(item)}
+                      >
+                        <span className="menu-item-number">
+                          {isResume ? '↓' : String(index + 1).padStart(2, '0')}
+                        </span>
+                        <span className="menu-item-label">{item.label}</span>
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
               </div>
 
-              <div className="menu-decoration">
-                <div className="decoration-lines">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="decoration-line" style={{ '--line-delay': `${i * 0.2}s` }} />
-                  ))}
-                </div>
-                <div className="decoration-circles">
-                  <div className="circle large"></div>
-                  <div className="circle medium"></div>
-                  <div className="circle small"></div>
-                </div>
+              {/* Right — Preview */}
+              <div className="menu-right">
+                {(() => {
+                  const hovered = MENU_ITEMS.find(m => m.id === hoveredMenuItem);
+                  if (hovered && hovered.preview) {
+                    return (
+                      <div className="menu-preview" key={hoveredMenuItem}>
+                        <div className="preview-image-wrap" style={{ '--accent': hovered.color }}>
+                          <img
+                            src={hovered.preview}
+                            alt={`${hovered.label} section preview`}
+                            className="preview-image"
+                          />
+                        </div>
+                        <p className="preview-desc">{hovered.desc}</p>
+                      </div>
+                    );
+                  }
+                  if (hovered && !hovered.preview) {
+                    return (
+                      <div className="menu-preview" key={hoveredMenuItem}>
+                        <span className="preview-number" style={{ color: hovered.color }}>↓</span>
+                        <p className="preview-desc">{hovered.desc}</p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="menu-preview default">
+                      <span className="preview-hint">Hover to preview</span>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
