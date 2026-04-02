@@ -174,7 +174,7 @@ const Contact = () => {
       const body = encodeURIComponent(
         `From: ${formData.name} (${formData.email})\n\n${formData.message}`
       );
-      window.location.href = `mailto:tushar@example.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:tushar7k9@gmail.com?subject=${subject}&body=${body}`;
       setFormStatus('sent');
       setTimeout(() => {
         setFormStatus('idle');
