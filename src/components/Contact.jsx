@@ -45,10 +45,9 @@ const REASON_CARDS = [
 ];
 
 const SOCIAL_LINKS = [
-  { label: 'GitHub', value: 'https://github.com/tushar', color: '#ff6b6b', action: 'link' },
-  { label: 'LinkedIn', value: 'https://linkedin.com/in/tushar', color: '#8b5cf6', action: 'link' },
-  { label: 'Twitter / X', value: 'https://x.com/tushar', color: '#FF79C6', action: 'link' },
-  { label: 'Email', value: 'tushar@example.com', color: '#4ecdc4', action: 'copy' },
+  { label: 'GitHub', value: 'https://github.com/tushar7k9', color: '#ff6b6b', action: 'link' },
+  { label: 'LinkedIn', value: 'https://www.linkedin.com/in/tushar-ab0964213', color: '#8b5cf6', action: 'link' },
+  { label: 'Email', value: 'tushar7k9@gmail.com', color: '#4ecdc4', action: 'copy' },
 ];
 
 const Contact = () => {

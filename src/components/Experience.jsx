@@ -3,66 +3,130 @@ import './Experience.css';
 
 const EXPERIENCE_DATA = [
   {
-    year: '2024',
-    timeline: 'Jun 2024 — Present',
-    company: 'Tech Company',
-    role: 'Full-Stack Developer',
+    year: '2026',
+    timeline: 'Feb 2026 — Present',
+    company: 'Razorpay',
+    logoDomain: 'razorpay.com',
+
+    role: 'Senior Software Development Engineer',
     description:
-      'Building scalable web applications and leading frontend architecture decisions. Working with React, Node.js, and cloud infrastructure.',
+      'Driving global payments innovation by building scalable, merchant-friendly solutions that simplify cross-border transactions. Focused on SDK development, seamless checkout integrations, and expanding international payment capabilities while maintaining high performance and flexibility.',
     bullets: [
-      'Architected and shipped a customer-facing dashboard serving 10k+ users',
-      'Reduced page load time by 40% through code-splitting and lazy loading',
-      'Mentored junior developers on React best practices',
+      'Leading Replit`s Stripe-to-Razorpay migration, enabling cross-border payments for a 40M+ global user base',
+      'Architected and delivered a plug-and-play Address Collection SDK in under 20 days',
+      'Built a CDN-delivered SDK with extensible pre-payment flows and one-line integration',
+      'Enabled seamless injection of pre-checkout workflows without disrupting native experience',
+      'Expanded global payment capabilities by enabling UPI for non-INR users',
+      'Working on building scalable, merchant-friendly solutions to simplify cross-border payments',
+      'Took ownership of designing the Smart Import Collect Flow, a mini SDK that handles the complete pre-payment logic',
+      'Ensured the SDK integrates smoothly with Razorpay’s native checkout experience without disrupting existing flows',
+      'Reduced dependency on the checkout team for small changes, allowing faster iterations instead of waiting weeks for updates',
+      'Made it easier for merchants to directly plug this SDK into payment links and create more interactive buyer information flows',
+      'Helped improve flexibility in pre-checkout experiences, enabling quicker experimentation and better adoption across merchants'
     ],
-    techStack: ['React', 'Node.js', 'TypeScript', 'AWS', 'PostgreSQL', 'Docker'],
+    techStack: ['Payments', 'SDK Development', 'CDN', 'UPI', 'Distributed Systems'],
     achievements: [
-      '10k+ active users on dashboard',
-      '40% faster page loads',
-      'Led team of 4 frontend devs',
+      '40M+ users supported',
+      'SDK delivered in <20 days',
+      'Enabled international UPI payments'
     ],
-    color: '#FF79C6',
+    color: '#3395FF',
+  },
+  {
+    year: '2026',
+    timeline: 'July 2025 — Jan 2026',
+    company: 'Kickdrum',
+    logoDomain: 'kickdrum.com',
+    role: 'Senior Software Engineer (SDE 3)',
+    description:
+      'Led large-scale system transformations and automation initiatives to drastically improve performance, reliability, and operational efficiency. Specialized in high-volume distributed systems, log intelligence, and building scalable tooling to reduce manual effort and enable real-time processing.',
+    bullets: [
+      'Led architectural revamp of high-volume messaging framework using React & Java',
+      'Reduced processing time from 85 mins to 2-3 mins (96.5% improvement)',
+      'Enabled real-time messaging for millions of users',
+      'Built GCP log analysis automation handling 2-3M logs per run',
+      'Implemented concurrency, intelligent error categorization, and automated reporting',
+      'Developed automated agents for security reports, code quality testing, and risk assessment',
+      'Saved 100+ engineering hours and contributed to cost savings during M&A due diligence'
+    ],
+    techStack: ['React', 'Java', 'GCP', 'Concurrency', 'Automation'],
+    achievements: [
+      '96.5% performance improvement',
+      '2-3M logs processed per run',
+      '100+ hours of manual effort saved'
+    ],
+    color: '#FF9F43',
   },
   {
     year: '2023',
-    timeline: 'Jan 2023 — May 2024',
-    company: 'Startup Inc.',
-    role: 'Frontend Engineer',
+    timeline: 'July 2024 — June 2025',
+    company: 'Kickdrum',
+    logoDomain: 'kickdrum.com',
+    role: 'Software Engineer (SDE 2)',
     description:
-      'Developed interactive web experiences using modern frontend technologies. Collaborated closely with design and product teams.',
+      'Improved BigQuery process efficiency, reducing query execution time by 50-60%',
     bullets: [
-      'Built a real-time collaborative editor with WebSocket integration',
-      'Implemented a design system used across 5 product verticals',
-      'Improved accessibility scores from 65 to 95 across all pages',
+      'Revamped messaging framework for a large-scale ed-tech initiative, reducing processing time by 60%',
+      'Resolved database latency issues and handled peak user loads for better stability',
+      'Enhanced deduplication for Email & SMS, reducing processing time by 55-60% for ~500K users',
+      'Built Python-based GCP log extraction system with threading & concurrency, improving efficiency by 90%',
+      'Integrated Google Cloud Functions & GCS for seamless log processing pipeline'
     ],
-    techStack: ['React', 'Next.js', 'Tailwind CSS', 'WebSockets', 'Figma', 'Jest'],
+    techStack: ['Python', 'BigQuery', 'GCP', 'Cloud Functions', 'Cloud Storage'],
     achievements: [
-      'Design system across 5 products',
-      'Accessibility score: 65 → 95',
-      'Real-time collab for 500+ users',
+      '50-60% faster query execution',
+      '60% reduction in message processing time',
+      '90% improvement in log processing efficiency'
     ],
     color: '#4ecdc4',
   },
-  {
-    year: '2022',
-    timeline: 'Jun 2022 — Dec 2022',
-    company: 'Innovation Labs',
-    role: 'Software Engineering Intern',
+ {
+    year: '2023',
+    timeline: 'Jan 2023 — Jun 2024',
+    company: 'Kickdrum',
+    logoDomain: 'kickdrum.com',
+    role: 'Software Developer (SDE 1)',
     description:
-      'Gained hands-on experience in full-stack development, working with agile teams on production-grade applications.',
+      '',
     bullets: [
-      'Developed RESTful APIs with Express and PostgreSQL',
-      'Created automated test suites increasing code coverage to 85%',
-      'Contributed to an internal tool that reduced deployment time by 30%',
+      'Executed a migration to a serverless architecture, resulting in a remarkable 10x reduction in AWS costs & a significant boost in efficiency, leveraging Serverless Framework',
+      'Implemented a CI/CD pipeline & automated CloudFront invalidation processes through AWS to accelerate deployment efficiency, content delivery, & reduce integration time by 50%',
+      'Enchanced system security to grade F to A+ on Mozzila Observatory, achieving 105/100 for extra measures.',
+      'Streamlined content delivery by implementing automated CloudFront invalidation processes using AWS CloudFront & Lambda, resulting in a 50% boot in delivery speed',
+      'Demonstrated major functionalities to clients, escalating client engagement, addressing numerous follow-up queries',
+      'Actively contributed to Agile sprints, conducted code reviews, provided effort estimates, and led 30+ interviews while creating 15+ coding questions for campus recruitment.',
     ],
-    techStack: ['Express', 'PostgreSQL', 'Python', 'Git', 'Jenkins', 'Redis'],
+    techStack: ['AWS', 'Lambda', 'CloudFront', 'CI/CD', 'Serverless Framework', 'Spring Boot', 'GraphQL', 'React', 'Java'],
     achievements: [
-      'Code coverage: 60% → 85%',
-      '30% faster deployments',
-      'Shipped 3 production features',
+      '10x AWS cost reduction',
+      '50% faster deployments',
+      'A+ security rating (105/100',
     ],
     color: '#8b5cf6',
   },
 ];
+
+const CompanyLogo = ({ domain, company, color }) => {
+  const [failed, setFailed] = React.useState(false);
+  const initials = company.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+  if (failed || !domain) {
+    return (
+      <span className="exp-logo-fallback" style={{ borderColor: color, color }}>
+        {initials}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      className="exp-logo-img"
+      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+      alt={`${company} logo`}
+      onError={() => setFailed(true)}
+    />
+  );
+};
 
 const TOTAL = EXPERIENCE_DATA.length;
 const SWIPE_THRESHOLD = 120;
@@ -78,6 +142,8 @@ const Experience = () => {
   const [swipeDir, setSwipeDir] = useState(null);
   const [isSnapping, setIsSnapping] = useState(false);
   const [flippedCards, setFlippedCards] = useState(new Set());
+  const [backHasMore, setBackHasMore] = useState({});
+  const backScrollRefs = useRef({});
   const sectionRef = useRef(null);
   const dragRef = useRef({
     active: false,
@@ -219,6 +285,25 @@ const Experience = () => {
     };
   }, [activeIndex]);
 
+  // Check back card overflow whenever a card is flipped
+  useEffect(() => {
+    flippedCards.forEach((index) => {
+      setTimeout(() => {
+        const el = backScrollRefs.current[index];
+        if (el) {
+          const hasMore = el.scrollHeight > el.clientHeight + 2;
+          setBackHasMore((prev) => ({ ...prev, [index]: hasMore }));
+        }
+      }, 350); // after flip animation
+    });
+  }, [flippedCards]);
+
+  const handleBackScroll = useCallback((e, index) => {
+    const el = e.currentTarget;
+    const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
+    setBackHasMore((prev) => ({ ...prev, [index]: !atBottom }));
+  }, []);
+
   const toggleFlip = useCallback((index) => {
     setFlippedCards((prev) => {
       const next = new Set(prev);
@@ -310,8 +395,12 @@ const Experience = () => {
 
   // Header rises and shrinks as cards arrive, but stays visible
   const headerOpacity = 1;
-  const headerScale = 1 - p * 0.3; // shrinks to 0.7
+  const headerScale = 1 - p * 0.3;
   const headerY = p * -30;
+
+  // Subtitle: hidden while cards are scattered, fades in as they converge
+  // Cards are fully stacked around p=0.75, so fade in from p=0.45 → 0.75
+  const subtitleOpacity = Math.max(0, Math.min(1, (p - 0.45) / 0.3));
 
   // Cards start scattered far apart (partially off-screen) with rotation
   // As user scrolls (after header hits top), they converge to center and stack
@@ -319,14 +408,15 @@ const Experience = () => {
     // Ease out cubic
     const eased = 1 - Math.pow(1 - p, 3);
 
-    // Spread positions: far left, center, far right — like mid-flight
-    const spreads = [
-      { x: -70, rotate: -15, y: 30 },    // card 0: far left, tilted
-      { x: 5, rotate: 3, y: -10 },       // card 1: slightly off center
-      { x: 65, rotate: 12, y: 25 },      // card 2: far right, tilted
+    // Spread positions distributed evenly across cards
+    const spreadConfigs = [
+      { x: -70, rotate: -15, y: 30 },
+      { x: -20, rotate: -5, y: -10 },
+      { x: 25, rotate: 8, y: 20 },
+      { x: 70, rotate: 15, y: -5 },
+      { x: 50, rotate: 12, y: 30 },
     ];
-
-    const spread = spreads[i];
+    const spread = spreadConfigs[i % spreadConfigs.length];
     const translateX = spread.x * (1 - eased);    // scattered → 0
     const rotate = spread.rotate * (1 - eased);    // tilted → 0
     const translateY = spread.y * (1 - eased);     // offset → 0
@@ -365,7 +455,10 @@ const Experience = () => {
             <span className="title-line">Experience</span>
             <span className="title-line title-highlight">Professional Journey</span>
           </h2>
-          <p className="experience-subtitle">
+          <p
+            className="experience-subtitle"
+            style={{ opacity: subtitleOpacity, transform: `translateY(${(1 - subtitleOpacity) * 12}px)` }}
+          >
             Building impactful software across teams and technologies
           </p>
         </div>
@@ -411,7 +504,7 @@ const Experience = () => {
               cardZIndex = 30 - stackPos * 10;
               cardTransform = isTop
                 ? topCardTransform
-                : `scale(${1 - stackPos * 0.05}) translateY(${stackPos * 15}px)`;
+                : `scale(${1 - stackPos * 0.04}) translateY(${stackPos * 10}px)`;
             } else {
               const fly = getCardFlyTransform(i);
               cardTransform = `translateX(${fly.translateX}%) translateY(${fly.translateY}px) rotate(${fly.rotate}deg)`;
@@ -435,39 +528,53 @@ const Experience = () => {
                 {/* Front Face */}
                 <div className="exp-card exp-card-front">
                   <span className="exp-card-timeline">{exp.timeline}</span>
-                  <span className="exp-card-badge">{exp.company}</span>
+                  <div className="exp-card-company-row">
+                    <CompanyLogo domain={exp.logoDomain} company={exp.company} color={exp.color} />
+                    <span className="exp-card-badge">{exp.company}</span>
+                  </div>
                   <h3 className="exp-card-role">{exp.role}</h3>
-                  <p className="exp-card-desc">{exp.description}</p>
+                  {exp.description && <p className="exp-card-desc">{exp.description}</p>}
                   <ul className="exp-card-bullets">
-                    {exp.bullets.map((bullet, j) => (
+                    {exp.bullets.slice(0, 2).map((bullet, j) => (
                       <li key={j}>{bullet}</li>
                     ))}
+                    {exp.bullets.length > 2 && (
+                      <li className="exp-bullet-peek">{exp.bullets[2]}</li>
+                    )}
                   </ul>
+                  {exp.bullets.length > 2 && <div className="exp-front-fade" />}
                   <span className="exp-card-flip-hint">tap to flip &rarr;</span>
                 </div>
 
                 {/* Back Face */}
                 <div className="exp-card exp-card-back">
-                  <span className="exp-card-back-label">Tech Stack</span>
-                  <div className="exp-card-tags">
-                    {exp.techStack.map((tech, j) => (
-                      <span key={j} className="exp-card-tag">{tech}</span>
-                    ))}
+                  <div
+                    className="exp-back-scroll-area"
+                    ref={(el) => (backScrollRefs.current[i] = el)}
+                    onScroll={(e) => handleBackScroll(e, i)}
+                  >
+                    <span className="exp-card-back-label">Tech Stack</span>
+                    <div className="exp-card-tags">
+                      {exp.techStack.map((tech, j) => (
+                        <span key={j} className="exp-card-tag">{tech}</span>
+                      ))}
+                    </div>
+
+                    <span className="exp-card-back-label">Key Achievements</span>
+                    <ul className="exp-card-achievements">
+                      {exp.achievements.map((a, j) => (
+                        <li key={j}>{a}</li>
+                      ))}
+                    </ul>
+
+                    <span className="exp-card-back-label">All Highlights</span>
+                    <ul className="exp-card-bullets">
+                      {exp.bullets.map((bullet, j) => (
+                        <li key={j}>{bullet}</li>
+                      ))}
+                    </ul>
                   </div>
-
-                  <span className="exp-card-back-label">Key Achievements</span>
-                  <ul className="exp-card-achievements">
-                    {exp.achievements.map((a, j) => (
-                      <li key={j}>{a}</li>
-                    ))}
-                  </ul>
-
-                  <span className="exp-card-back-label">Highlights</span>
-                  <ul className="exp-card-bullets">
-                    {exp.bullets.map((bullet, j) => (
-                      <li key={j}>{bullet}</li>
-                    ))}
-                  </ul>
+                  {backHasMore[i] && <div className="exp-back-fade" />}
                   <span className="exp-card-flip-hint">&larr; tap to flip back</span>
                 </div>
               </div>

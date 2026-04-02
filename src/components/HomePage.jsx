@@ -148,8 +148,13 @@ const HomePage = () => {
 
   const handleNavigation = (item) => {
     if (item.action === 'download') {
-      // TODO: replace with actual resume URL
-      alert('Resume download coming soon!');
+      const link = document.createElement('a');
+      link.href = 'https://drive.google.com/uc?export=download&id=1aAJLl5hBCehJR_0A_Lv_6IdsABRl2C-P';
+      link.download = 'Tushar_Kashyap_Resume.pdf';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       return;
     }
     closeMenu();
@@ -329,15 +334,9 @@ const HomePage = () => {
 
       {/* Footer Social Links */}
       <footer className="social-footer">
-        <a href="#" className="social-link">
-          Instagram
-        </a>
-        <a href="#" className="social-link">
-          LinkedIn
-        </a>
-        <a href="#" className="social-link">
-          Behance
-        </a>
+        <a href="https://github.com/tushar7k9" target="_blank" rel="noopener noreferrer" className="social-link">GitHub</a>
+        <a href="https://www.linkedin.com/in/tushar-ab0964213" target="_blank" rel="noopener noreferrer" className="social-link">LinkedIn</a>
+        <a href="mailto:tushar7k9@gmail.com" className="social-link">Email</a>
       </footer>
 
       {/* Menu Overlay — Split Panel */}

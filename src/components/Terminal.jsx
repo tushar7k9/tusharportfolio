@@ -78,9 +78,9 @@ const COMMANDS = {
 
   contact: () => [
     '',
-    '  Email     tushar@example.com',
+    '  Email     tushar7k9@gmail.com',
     '  GitHub    github.com/tushar7k9',
-    '  LinkedIn  linkedin.com/in/tushar',
+    '  LinkedIn  linkedin.com/in/tushar-ab0964213',
     '',
     '  Feel free to reach out!',
     '',

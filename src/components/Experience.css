@@ -26,7 +26,7 @@
 /* Header */
 .experience-header {
   text-align: center;
-  margin-bottom: 60px;
+  /* margin-bottom: 60px; */
 }
 
 .experience-section-title {
@@ -65,11 +65,7 @@
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0.05em;
   margin: 0;
-  opacity: 0;
-}
-
-.experience-sticky.animate-in .experience-subtitle {
-  animation: expTitleSlideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
+  transition: opacity 0.05s linear, transform 0.05s linear;
 }
 
 @keyframes expTitleSlideUp {
@@ -82,7 +78,7 @@
   position: relative;
   width: 100%;
   max-width: 540px;
-  height: 540px;
+  height: 580px;
   margin: 0 auto;
   outline: none;
   perspective: 1200px;
@@ -163,7 +159,6 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  overflow-y: auto;
   filter: url(#sketch-filter);
 }
 
@@ -194,14 +189,92 @@
   transform: rotate(-1deg);
 }
 
-/* Front face — default visible */
+/* Front face — default visible, no scrolling (clips content) */
 .exp-card-front {
   transform: rotateY(0deg);
+  overflow: hidden;
 }
 
-/* Back face — initially hidden */
+/* Peek bullet — clips to 1 line, fades right, signals more content */
+.exp-bullet-peek {
+  font-family: 'Kalam', cursive;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+  position: relative;
+  padding-left: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, black 40%, transparent 88%);
+  mask-image: linear-gradient(to right, black 40%, transparent 88%);
+}
+
+.exp-bullet-peek::before {
+  content: '~>';
+  position: absolute;
+  left: 0;
+  color: var(--card-color);
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 1rem;
+  opacity: 0.4;
+}
+
+/* Front overflow fade — sits over the peek bullet */
+.exp-front-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 50%, #000000 100%);
+  pointer-events: none;
+}
+
+/* Back face — flex column, inner area scrolls */
 .exp-card-back {
   transform: rotateY(180deg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.exp-back-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 70px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.exp-back-scroll-area::-webkit-scrollbar {
+  width: 3px;
+}
+
+.exp-back-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.exp-back-scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Back overflow gradient — covers all the way to card bottom */
+.exp-back-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.85) 55%, #000000 100%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1;
 }
 
 /* Hover on top card */
@@ -232,6 +305,41 @@
   margin-bottom: 10px;
   margin-top: 10px;
   letter-spacing: 0.08em;
+}
+
+/* Company row: logo + name side by side */
+.exp-card-company-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+/* Company favicon logo */
+.exp-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+/* Initials fallback */
+.exp-logo-fallback {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
 }
 
 .exp-card-badge {
@@ -322,6 +430,7 @@
   letter-spacing: 0.02em;
   opacity: 0.7;
   animation: hintBlink 2.5s ease-in-out infinite;
+  z-index: 2;
 }
 
 @keyframes hintBlink {
@@ -550,7 +659,7 @@
   }
 
   .experience-header {
-    margin-bottom: 40px;
+    /* margin-bottom: 40px; */
   }
 
   .exp-stack-container {
