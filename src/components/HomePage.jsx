@@ -108,12 +108,13 @@ const HomePage = () => {
 
 
   const MENU_ITEMS = [
-    { id: 'home', label: 'HOME', desc: 'Welcome & Introduction', color: '#4ecdc4', sectionIndex: 0, preview: homePreview },
-    { id: 'about', label: 'ABOUT', desc: 'My journey, laser flow & terminal', color: '#9333ea', sectionIndex: 1, preview: aboutPreview },
-    { id: 'skills', label: 'SKILLS', desc: '3D sphere word cloud with lightning', color: '#4ecdc4', sectionIndex: 2, preview: skillsPreview },
-    { id: 'experience', label: 'EXPERIENCE', desc: 'Draggable sketch card stack', color: '#FF79C6', sectionIndex: 3, preview: experiencePreview },
-    { id: 'contact', label: 'CONTACT', desc: 'Floating cards & message form', color: '#ff6b6b', sectionIndex: 4, preview: contactPreview },
-    { id: 'resume', label: 'RESUME', desc: 'Download my CV', color: '#8b5cf6', action: 'download' },
+    { id: 'home',         label: 'HOME',         desc: 'Welcome & Introduction',            color: '#4ecdc4', sectionIndex: 0, preview: homePreview },
+    { id: 'about',        label: 'ABOUT',        desc: 'My journey, laser flow & terminal',  color: '#9333ea', sectionIndex: 1, preview: aboutPreview },
+    { id: 'skills',       label: 'SKILLS',       desc: '3D sphere word cloud with lightning',color: '#4ecdc4', sectionIndex: 2, preview: skillsPreview },
+    { id: 'experience',   label: 'EXPERIENCE',   desc: 'Draggable sketch card stack',        color: '#FF79C6', sectionIndex: 3, preview: experiencePreview },
+    { id: 'achievements', label: 'ACHIEVEMENTS', desc: 'Certifications & milestones',        color: '#FFD700', sectionIndex: 4, preview: null },
+    { id: 'contact',      label: 'CONTACT',      desc: 'Floating cards & message form',      color: '#ff6b6b', sectionIndex: 5, preview: contactPreview },
+    { id: 'resume',       label: 'RESUME',       desc: 'Download my CV',                     color: '#8b5cf6', action: 'download' },
   ];
 
   const toggleMenu = () => {

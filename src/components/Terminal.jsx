@@ -102,6 +102,7 @@ const COMMANDS = {
     '    experience   Work experience',
     '    projects     Featured projects',
     '    education    Education background',
+    '    achievements Certifications & milestones',
     '    contact      Get in touch',
     '    whoami       Current user',
     '    pwd          Print working directory',
@@ -174,6 +175,27 @@ const COMMANDS = {
     '',
   ],
 
+  achievements: () => [
+    '',
+    '  ★ LEGENDARY',
+    '    AWS Certified Solutions Architect – Professional (2025)',
+    '',
+    '  ◆ EPIC',
+    "    India's Got Talent – Semifinalist (Season 5)",
+    '    National Yoga Competition – 2nd Place',
+    '    Zuno Fellowship – Silver Winner, ranked 202 globally (2023)',
+    '',
+    '  ● RARE',
+    '    LeetCode Top 5% · Rating 1880 · Rank 1143/21K+ (Contest 335)',
+    '',
+    '  ○ UNCOMMON',
+    '    1000+ problems solved across platforms',
+    '    CodeChef 3-Star · Rating 1775',
+    '',
+    { type: 'jump', label: 'Go to Achievements', sectionIndex: 4, color: '#FFD700' },
+    '',
+  ],
+
   contact: () => [
     '',
     '  Email     tushar7k9@gmail.com',
@@ -182,7 +204,7 @@ const COMMANDS = {
     '',
     '  Feel free to reach out!',
     '',
-    { type: 'jump', label: 'Go to Contact', sectionIndex: 4, color: '#ff6b6b' },
+    { type: 'jump', label: 'Go to Contact', sectionIndex: 5, color: '#ff6b6b' },
     '',
   ],
 
@@ -191,9 +213,9 @@ const COMMANDS = {
   pwd: () => ['/home/tushar/portfolio'],
 
   ls: () => [
-    'about.txt    skills.txt    experience.txt',
-    'projects.txt education.txt contact.txt',
-    'hack.exe',
+    'about.txt       skills.txt      experience.txt',
+    'achievements.txt projects.txt   education.txt',
+    'contact.txt      hack.exe',
   ],
 
   cat: (args) => {

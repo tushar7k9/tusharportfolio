@@ -3,6 +3,7 @@ import HomePage from './components/HomePage'
 import About from './components/About'
 import Skills from './components/Skills'
 import Experience from './components/Experience'
+import Achievements from './components/Achievements'
 import Contact from './components/Contact'
 import homePreview from './assets/previews/home.png'
 import aboutPreview from './assets/previews/about.png'
@@ -12,11 +13,12 @@ import contactPreview from './assets/previews/contact.png'
 import './App.css'
 
 const SECTIONS = [
-  { id: 'home', label: 'Home', color: '#4ecdc4', preview: homePreview },
-  { id: 'about', label: 'About', color: '#9333ea', preview: aboutPreview },
-  { id: 'skills', label: 'Skills', color: '#4ecdc4', preview: skillsPreview },
-  { id: 'experience', label: 'Work', color: '#FF79C6', preview: experiencePreview },
-  { id: 'contact', label: 'Contact', color: '#4ecdc4', preview: contactPreview },
+  { id: 'home',         label: 'Home',         color: '#4ecdc4', preview: homePreview },
+  { id: 'about',        label: 'About',        color: '#9333ea', preview: aboutPreview },
+  { id: 'skills',       label: 'Skills',       color: '#4ecdc4', preview: skillsPreview },
+  { id: 'experience',   label: 'Work',         color: '#FF79C6', preview: experiencePreview },
+  { id: 'achievements', label: 'Awards',       color: '#FFD700', preview: null },
+  { id: 'contact',      label: 'Contact',      color: '#ff6b6b', preview: contactPreview },
 ]
 
 function App() {
@@ -76,6 +78,9 @@ function App() {
         <Experience />
       </div>
       <div className="page-section" ref={(el) => (sectionRefs.current[4] = el)}>
+        <Achievements />
+      </div>
+      <div className="page-section" ref={(el) => (sectionRefs.current[5] = el)}>
         <Contact />
       </div>
 
@@ -98,7 +103,7 @@ function App() {
             >
               {section.label}
             </span>
-            {hoveredDot === i && (
+            {hoveredDot === i && section.preview && (
               <span className="dot-preview" style={{ '--dot-color': section.color }}>
                 <img src={section.preview} alt={section.label} />
               </span>

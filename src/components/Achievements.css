@@ -1,0 +1,787 @@
+/* ============================
+   Achievements Section
+   Holographic trading-card style
+   ============================ */
+
+.achievements-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 90px 50px 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dot-grid background */
+.achievements-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ambient corner glow blobs */
+.achievements-page::before,
+.achievements-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.achievements-page::before {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%);
+}
+.achievements-page::after {
+  width: 400px;
+  height: 400px;
+  bottom: -80px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(192,132,252,0.05) 0%, transparent 70%);
+}
+
+/* Content wrapper */
+.achievements-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.achievements-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.achievements-title {
+  font-size: 4rem;
+  font-weight: 100;
+  margin: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  letter-spacing: 0.2em;
+}
+
+.a-title-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.achievements-content.animate-in .a-title-line {
+  animation: aTitleUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.achievements-content.animate-in .a-title-line:first-child {
+  animation-delay: 0.1s;
+}
+
+.a-title-highlight {
+  color: #FFD700;
+  font-weight: 300;
+  animation-delay: 0.35s !important;
+}
+
+@keyframes aTitleUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.achievements-subtitle {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em;
+  margin: 0 0 28px;
+  opacity: 0;
+}
+
+.achievements-content.animate-in .achievements-subtitle {
+  animation: aTitleUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+}
+
+/* Stats bar */
+.achievements-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding: 14px 32px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.025);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+}
+
+.achievements-content.animate-in .achievements-stats {
+  animation: aTitleUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+}
+
+.stat-legendary {
+  color: #FFD700;
+}
+
+.stat-rank {
+  color: #4ecdc4;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+}
+
+.stat-label {
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 34px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* ── Rarity legend ───────────────────────────────────────────────────────── */
+.rarity-legend {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 44px;
+  flex-wrap: wrap;
+  opacity: 0;
+}
+
+.achievements-content.animate-in .rarity-legend {
+  animation: aTitleUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s forwards;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--rc);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.legend-pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rc);
+  box-shadow: 0 0 8px var(--rc);
+  flex-shrink: 0;
+}
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* Last card (7th) — centered alone in third row */
+.achievement-card:last-child {
+  grid-column: 2 / 3;
+}
+
+/* ── Card base ───────────────────────────────────────────────────────────── */
+.achievement-card {
+  position: relative;
+  background: rgba(8, 8, 12, 0.92);
+  border: 1px solid color-mix(in srgb, var(--rarity-color) 22%, transparent);
+  border-radius: 16px;
+  padding: 22px 22px 18px;
+  overflow: hidden;
+  cursor: default;
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+  will-change: transform;
+}
+
+/* Final resting state set via CSS — animation only handles the entrance slide */
+.achievement-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: cardIn 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--delay) backwards;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.achievement-card.hovered {
+  border-color: var(--rarity-color);
+  box-shadow:
+    0 0 18px var(--rarity-glow),
+    0 0 50px color-mix(in srgb, var(--rarity-glow) 45%, transparent),
+    0 18px 40px rgba(0,0,0,0.6);
+}
+
+/* Holographic shimmer overlay */
+.card-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(
+    circle at var(--shimmer-x, 50%) var(--shimmer-y, 50%),
+    rgba(255,255,255,0.09) 0%,
+    rgba(255,255,255,0.03) 35%,
+    transparent 65%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.achievement-card.hovered .card-shimmer {
+  opacity: 1;
+}
+
+/* Corner accent glow */
+.card-corner-glow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(
+    circle at 100% 0%,
+    color-mix(in srgb, var(--rarity-color) 18%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+  border-radius: 0 16px 0 0;
+  z-index: 0;
+}
+
+/* Content above overlays */
+.card-top,
+.card-icon-wrap,
+.card-title,
+.card-subtitle,
+.card-detail,
+.card-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Top row */
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-rarity-badge {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--rarity-color);
+  opacity: 0.85;
+}
+
+.card-year {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.3);
+}
+
+/* Icon */
+.card-icon-wrap {
+  margin-bottom: 14px;
+}
+
+.card-icon {
+  font-size: 2.2rem;
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: drop-shadow(0 0 8px var(--rarity-glow));
+}
+
+.achievement-card.hovered .card-icon {
+  transform: scale(1.18) translateY(-3px);
+  filter: drop-shadow(0 0 16px var(--rarity-glow));
+}
+
+/* Text */
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 0 0 5px;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.card-subtitle {
+  font-size: 0.78rem;
+  color: var(--rarity-color);
+  margin: 0 0 10px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.card-detail {
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.42);
+  margin: 0 0 14px;
+  line-height: 1.55;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.35s ease, max-height 0.4s ease;
+}
+
+.achievement-card.hovered .card-detail {
+  opacity: 1;
+  max-height: 80px;
+}
+
+/* Footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: auto;
+}
+
+.card-link {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.66rem;
+  color: var(--rarity-color);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s ease, text-shadow 0.2s ease;
+}
+
+.card-link:hover {
+  opacity: 0.75;
+  text-shadow: 0 0 8px var(--rarity-color);
+  text-decoration: underline;
+}
+
+.card-xp {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 0.04em;
+}
+
+/* ── Legendary idle glow — on ::before so card opacity is never touched ── */
+.achievement-card.rarity-legendary::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Pulse starts after entrance animation finishes */
+.achievement-card.rarity-legendary.visible::before {
+  animation: legendaryPulse 3s ease-in-out calc(var(--delay) + 0.65s) infinite;
+}
+
+/* Pause pulse on hover so the card's hover box-shadow takes full control */
+.achievement-card.rarity-legendary.hovered::before {
+  animation-play-state: paused;
+}
+
+@keyframes legendaryPulse {
+  0%, 100% { box-shadow: 0 0 14px rgba(255,215,0,0.1),  0 0 35px rgba(255,215,0,0.04); }
+  50%       { box-shadow: 0 0 24px rgba(255,215,0,0.22), 0 0 60px rgba(255,215,0,0.09); }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .achievements-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .achievement-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 380px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .achievements-page {
+    padding: 70px 16px 80px;
+  }
+  .achievements-title {
+    font-size: 2.6rem;
+  }
+  .achievements-stats {
+    gap: 16px;
+    padding: 12px 20px;
+  }
+  .achievements-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .achievement-card:last-child {
+    grid-column: auto;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achievement-card,
+  .achievement-card.rarity-legendary {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .card-icon {
+    transition: none;
+  }
+}
+
+/* ── Certificate Modal ───────────────────────────────────────────────────── */
+.cert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: overlayFadeIn 0.25s ease forwards;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cert-modal {
+  position: relative;
+  background: #080810;
+  border: 1px solid color-mix(in srgb, var(--rarity-color) 40%, transparent);
+  border-radius: 20px;
+  padding: 36px 40px 28px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 0 40px var(--rarity-glow),
+    0 0 100px color-mix(in srgb, var(--rarity-glow) 40%, transparent),
+    0 30px 80px rgba(0, 0, 0, 0.8);
+  animation: modalScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* Close × button */
+.cert-close-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  z-index: 1;
+}
+
+.cert-close-x:hover {
+  border-color: var(--rarity-color);
+  color: var(--rarity-color);
+  background: color-mix(in srgb, var(--rarity-color) 10%, transparent);
+}
+
+/* Ornamental lines */
+.cert-ornament-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cert-ornament-bottom {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.cert-ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--rarity-color) 50%, transparent),
+    transparent
+  );
+}
+
+.cert-diamond {
+  font-size: 0.55rem;
+  color: var(--rarity-color);
+  opacity: 0.8;
+}
+
+/* Official label */
+.cert-official-label {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 20px;
+  text-transform: uppercase;
+}
+
+/* Icon */
+.cert-icon-wrap {
+  margin-bottom: 14px;
+}
+
+.cert-icon {
+  font-size: 3rem;
+  display: inline-block;
+  filter: drop-shadow(0 0 16px var(--rarity-glow));
+  animation: certIconFloat 3s ease-in-out infinite;
+}
+
+@keyframes certIconFloat {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-6px); }
+}
+
+/* Titles */
+.cert-title {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 0 0 6px;
+  color: #fff;
+  letter-spacing: 0.03em;
+}
+
+.cert-subtitle {
+  font-size: 0.85rem;
+  color: var(--rarity-color);
+  margin: 0 0 20px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* Divider */
+.cert-hr {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin: 0 0 20px;
+}
+
+/* Meta grid */
+.cert-meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.cert-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.cert-meta-key {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.cert-meta-val {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+.cert-credential-id {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.68rem;
+  color: var(--rarity-color);
+  letter-spacing: 0.06em;
+  word-break: break-all;
+}
+
+/* Seal */
+.cert-seal {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cert-seal-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--rarity-color) 50%, transparent);
+  animation: sealSpin 8s linear infinite;
+}
+
+.cert-seal-ring::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in srgb, var(--rarity-color) 35%, transparent);
+}
+
+@keyframes sealSpin {
+  to { transform: rotate(360deg); }
+}
+
+.cert-seal-icon {
+  font-size: 1.2rem;
+  color: var(--rarity-color);
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+}
+
+.cert-seal-label {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.2em;
+  color: var(--rarity-color);
+  opacity: 0.7;
+  margin: 4px 0 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Actions row */
+.cert-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.cert-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--rarity-color);
+  background: color-mix(in srgb, var(--rarity-color) 12%, transparent);
+  color: var(--rarity-color);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cert-verify-btn:hover {
+  background: color-mix(in srgb, var(--rarity-color) 22%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--rarity-color) 30%, transparent);
+}
+
+.cert-btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.cert-verify-btn:hover .cert-btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+.cert-dismiss-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.cert-dismiss-btn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 480px) {
+  .cert-modal {
+    padding: 28px 24px 22px;
+  }
+  .cert-actions {
+    flex-direction: column;
+  }
+  .cert-verify-btn,
+  .cert-dismiss-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
