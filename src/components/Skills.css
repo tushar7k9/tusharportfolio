@@ -294,7 +294,7 @@
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+  transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.4s ease;
   will-change: left, top, opacity, transform, filter;
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.03);
   letter-spacing: 0.02em;
@@ -304,6 +304,12 @@
 .sphere-word.dimmed {
   color: rgba(255, 255, 255, 0.04) !important;
   text-shadow: none !important;
+}
+
+/* Fully hidden when filtered out — class toggled by RAF loop */
+.sphere-word.word-filtered {
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Hover — pure white glow */

@@ -15,22 +15,27 @@ const SKILLS_DATA = [
   { name: 'JavaScript', category: 'languages', level: 92 },
   { name: 'TypeScript', category: 'languages', level: 85 },
   { name: 'Python', category: 'languages', level: 80 },
+  { name: 'PHP Qcodo', category: 'languages', level: 100 },
+  { name: 'Ruby', category: 'languages', level: 80 },
   { name: 'Java', category: 'languages', level: 72 },
   { name: 'C++', category: 'languages', level: 65 },
   { name: 'React', category: 'frontend', level: 90 },
+  { name: 'Svelte', category: 'frontend', level: 90 },
   { name: 'Next.js', category: 'frontend', level: 82 },
   { name: 'Tailwind CSS', category: 'frontend', level: 88 },
   { name: 'Three.js', category: 'frontend', level: 70 },
   { name: 'Node.js', category: 'backend', level: 87 },
   { name: 'Express', category: 'backend', level: 85 },
+  { name: 'Spring Boot', category: 'backend', level: 90 },
   { name: 'Django', category: 'backend', level: 68 },
   { name: 'REST APIs', category: 'backend', level: 90 },
   { name: 'PostgreSQL', category: 'databases', level: 78 },
   { name: 'MongoDB', category: 'databases', level: 82 },
   { name: 'Redis', category: 'databases', level: 65 },
   { name: 'Docker', category: 'devops', level: 75 },
-  { name: 'AWS', category: 'devops', level: 70 },
+  { name: 'AWS', category: 'devops', level: 95 },
   { name: 'CI/CD', category: 'devops', level: 72 },
+  { name: 'Serverless Framework', category: 'devops', level: 85 },
   { name: 'Git', category: 'devops', level: 90 },
   { name: 'VS Code', category: 'tools', level: 95 },
   { name: 'Figma', category: 'tools', level: 70 },
@@ -75,6 +80,24 @@ const generateLightning = (x1, y1, x2, y2, depth) => {
   return [...left, ...right.slice(1)];
 };
 
+// Build target points: matching skills remap to fill the full sphere,
+// non-matching skills receive their CURRENT position (passed in) so they don't move.
+const buildTargetPoints = (category, currentPositions) => {
+  const allBase = fibonacciSphere(SKILLS_DATA.length);
+  if (category === 'all') return allBase;
+
+  const matchIndices = SKILLS_DATA.map((s, i) => s.category === category ? i : -1).filter(i => i >= 0);
+  const remapped = fibonacciSphere(matchIndices.length);
+
+  // Start with current snapshot so non-matches stay frozen where they are
+  const targets = currentPositions.map(p => ({ ...p }));
+  // Matching skills get new evenly-distributed positions
+  matchIndices.forEach((skillIdx, j) => {
+    targets[skillIdx] = { ...remapped[j] };
+  });
+  return targets;
+};
+
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [isVisible, setIsVisible] = useState(false);
@@ -83,7 +106,11 @@ const Skills = () => {
   const sectionRef = useRef(null);
   const stickyRef = useRef(null);
   const cloudRef = useRef(null);
-  const pointsRef = useRef(fibonacciSphere(SKILLS_DATA.length));
+  // currentPointsRef: lerped positions used each frame
+  const currentPointsRef = useRef(fibonacciSphere(SKILLS_DATA.length));
+  // targetPointsRef: destination positions, updated on filter change
+  const targetPointsRef = useRef(fibonacciSphere(SKILLS_DATA.length));
+  const activeCategoryRef = useRef('all');
   const rotationRef = useRef({ x: 0, y: 0 });
   const velocityRef = useRef({ x: 0.003, y: 0.005 });
   const mouseRef = useRef({ active: false, dragging: false, x: 0, y: 0, lastX: 0, lastY: 0 });
@@ -136,12 +163,19 @@ const Skills = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Recompute target positions when filter changes
+  useEffect(() => {
+    activeCategoryRef.current = activeCategory;
+    // Pass current lerped positions so non-matching skills freeze in place
+    targetPointsRef.current = buildTargetPoints(activeCategory, currentPointsRef.current);
+  }, [activeCategory]);
+
   // 3D sphere rotation + lightning animation
   useEffect(() => {
     if (!isVisible) return;
 
     const RADIUS = 1;
-    const points = pointsRef.current;
+    const LERP = 0.055; // smoothness of position transition
 
     const rotatePoint = (p, rx, ry) => {
       let x = p.x * Math.cos(ry) - p.z * Math.sin(ry);
@@ -184,17 +218,39 @@ const Skills = () => {
 
       const rx = rotationRef.current.x;
       const ry = rotationRef.current.y;
+      const current = currentPointsRef.current;
+      const targets = targetPointsRef.current;
+      const category = activeCategoryRef.current;
 
-      for (let i = 0; i < points.length; i++) {
+      for (let i = 0; i < SKILLS_DATA.length; i++) {
         const el = wordElsRef.current[i];
         if (!el) continue;
 
-        const rotated = rotatePoint(points[i], rx, ry);
+        // Lerp current position toward target
+        current[i].x += (targets[i].x - current[i].x) * LERP;
+        current[i].y += (targets[i].y - current[i].y) * LERP;
+        current[i].z += (targets[i].z - current[i].z) * LERP;
+
+        const isMatch = category === 'all' || SKILLS_DATA[i].category === category;
+        const rotated = rotatePoint(current[i], rx, ry);
         const scale = (rotated.z + RADIUS) / (2 * RADIUS);
+
+        if (!isMatch) {
+          // Add class — CSS transition handles fade to 0, RAF never touches opacity
+          el.classList.add('word-filtered');
+          el.style.zIndex = 0;
+          el.style.left = `${rotated.x * 42 + 50}%`;
+          el.style.top = `${rotated.y * 42 + 50}%`;
+          el.style.transform = `translate(-50%, -50%) scale(${0.5 + scale * 0.3})`;
+          el.style.filter = 'none';
+          continue;
+        }
+
+        // Remove class so CSS transitions back to visible
+        el.classList.remove('word-filtered');
         const opacity = 0.15 + scale * 0.85;
         const size = 0.6 + scale * 0.5;
         const blur = Math.max(0, (1 - scale) * 2.5);
-
         const projX = rotated.x * 42 + 50;
         const projY = rotated.y * 42 + 50;
 
@@ -206,7 +262,7 @@ const Skills = () => {
         el.style.zIndex = Math.round(scale * 100);
       }
 
-      // --- Lightning ---
+      // --- Lightning — only target matching skills when filtered ---
       const canvas = canvasRef.current;
       const cloud = cloudRef.current;
       if (canvas && cloud) {
@@ -227,8 +283,9 @@ const Skills = () => {
         if (now > lt.nextSwitch) {
           const count = 1 + Math.floor(Math.random() * 2);
           const candidates = [];
-          for (let i = 0; i < points.length; i++) {
-            if (wordElsRef.current[i]) candidates.push(i);
+          for (let i = 0; i < SKILLS_DATA.length; i++) {
+            const isMatch = category === 'all' || SKILLS_DATA[i].category === category;
+            if (wordElsRef.current[i] && isMatch) candidates.push(i);
           }
           lt.targets = [];
           lt.shockedWords = new Set();
@@ -304,7 +361,7 @@ const Skills = () => {
           if (el && lt.shockedWords.has(idx)) el.classList.add('word-shocked');
         }
 
-        for (let i = 0; i < wordElsRef.current.length; i++) {
+        for (let i = 0; i < SKILLS_DATA.length; i++) {
           const el = wordElsRef.current[i];
           if (el && !lt.shockedWords.has(i)) el.classList.remove('word-shocked');
         }
@@ -468,7 +525,6 @@ const Skills = () => {
 
           {SKILLS_DATA.map((skill, i) => {
             const color = getCategoryColor(skill.category);
-            const isDimmed = activeCategory !== 'all' && skill.category !== activeCategory;
             const isHovered = hoveredSkill === skill.name;
             const baseFontSize = 0.8 + (skill.level - 60) / 60;
 
@@ -476,7 +532,7 @@ const Skills = () => {
               <span
                 key={skill.name}
                 ref={(el) => (wordElsRef.current[i] = el)}
-                className={`sphere-word ${isDimmed ? 'dimmed' : ''} ${isHovered ? 'word-hovered' : ''}`}
+                className={`sphere-word ${isHovered ? 'word-hovered' : ''}`}
                 style={{
                   '--word-color': color,
                   '--base-size': `${baseFontSize}rem`,
