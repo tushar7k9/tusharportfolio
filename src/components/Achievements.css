@@ -44,21 +44,6 @@
   transition: background 0.08s linear;
 }
 
-/* ── Scanlines texture ────────────────────────────────────────────────────── */
-.ach-scanlines {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(255, 255, 255, 0.011) 2px,
-    rgba(255, 255, 255, 0.011) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
 /* ── Ambient corner glows — pulsing ──────────────────────────────────────── */
 .ach-ambient-1 {
   position: absolute;
@@ -106,48 +91,6 @@
 .achievements-header {
   text-align: center;
   margin-bottom: 60px;
-}
-
-/* Data ticker / scrolling stream */
-.ach-data-ticker {
-  overflow: hidden;
-  margin-bottom: 28px;
-  position: relative;
-}
-
-.ach-data-ticker::before,
-.ach-data-ticker::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  z-index: 2;
-}
-
-.ach-data-ticker::before {
-  left: 0;
-  background: linear-gradient(90deg, #000, transparent);
-}
-
-.ach-data-ticker::after {
-  right: 0;
-  background: linear-gradient(270deg, #000, transparent);
-}
-
-.ach-data-ticker span {
-  display: inline-block;
-  white-space: nowrap;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 0.57rem;
-  letter-spacing: 0.12em;
-  color: rgba(78, 205, 196, 0.28);
-  animation: tickerScroll 28s linear infinite;
-}
-
-@keyframes tickerScroll {
-  from { transform: translateX(60vw); }
-  to   { transform: translateX(-100%); }
 }
 
 .achievements-title {
@@ -215,14 +158,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
-  border: 1px solid color-mix(in srgb, var(--mc) 25%, transparent);
+  padding: 5px 16px;
+  border: 1px solid color-mix(in srgb, var(--mc) 22%, transparent);
   border-radius: 20px;
   background: color-mix(in srgb, var(--mc) 5%, transparent);
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  color: color-mix(in srgb, var(--mc) 80%, rgba(255,255,255,0.6));
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--mc) 85%, rgba(255,255,255,0.7));
   transition: background 0.25s ease, border-color 0.25s ease;
 }
 
@@ -283,11 +226,11 @@
 
 /* Category tag */
 .ach-category-tag {
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
   color: var(--cat-color);
-  opacity: 0.75;
+  opacity: 0.7;
   position: relative;
   z-index: 1;
   transition: opacity 0.3s ease;
@@ -300,79 +243,24 @@
   letter-spacing: 0.06em;
 }
 
-/* ── Corner brackets ──────────────────────────────────────────────────────── */
-.ach-corners {
+/* ── Soft hover glow (organic light from above) ───────────────────────────── */
+.ach-hover-glow {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.cb {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  opacity: 0;
-  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.cb-tl {
-  top: 7px; left: 7px;
-  border-top: 1.5px solid var(--cat-color);
-  border-left: 1.5px solid var(--cat-color);
-  transform: translate(-5px, -5px);
-}
-.cb-tr {
-  top: 7px; right: 7px;
-  border-top: 1.5px solid var(--cat-color);
-  border-right: 1.5px solid var(--cat-color);
-  transform: translate(5px, -5px);
-}
-.cb-bl {
-  bottom: 7px; left: 7px;
-  border-bottom: 1.5px solid var(--cat-color);
-  border-left: 1.5px solid var(--cat-color);
-  transform: translate(-5px, 5px);
-}
-.cb-br {
-  bottom: 7px; right: 7px;
-  border-bottom: 1.5px solid var(--cat-color);
-  border-right: 1.5px solid var(--cat-color);
-  transform: translate(5px, 5px);
-}
-
-/* Show brackets on hover */
-.ach-card.hovered .cb,
-.ach-featured.hovered .cb {
-  opacity: 0.75;
-  transform: translate(0, 0);
-}
-
-/* ── Scan line sweep ──────────────────────────────────────────────────────── */
-.ach-scan-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  top: 0;
-  background: linear-gradient(90deg, transparent, var(--cat-color), transparent);
+  background: radial-gradient(
+    ellipse 80% 55% at 50% -10%,
+    color-mix(in srgb, var(--cat-color) 14%, transparent) 0%,
+    transparent 65%
+  );
   opacity: 0;
   pointer-events: none;
-  z-index: 9;
+  z-index: 1;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.ach-card.hovered .ach-scan-line {
-  animation: scanDown 1s ease-out forwards;
-}
-
-.ach-featured.hovered .ach-scan-line {
-  animation: scanDown 1.2s ease-out forwards;
-}
-
-@keyframes scanDown {
-  0%   { top: 0%;   opacity: 0.9; }
-  80%  { opacity: 0.7; }
-  100% { top: 100%; opacity: 0; }
+.ach-card.hovered .ach-hover-glow,
+.ach-featured.hovered .ach-hover-glow {
+  opacity: 1;
 }
 
 /* ── Featured card ────────────────────────────────────────────────────────── */
@@ -1078,9 +966,6 @@
     width: 100%;
     justify-content: center;
   }
-  .ach-data-ticker {
-    display: none;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1096,9 +981,6 @@
   }
   .ach-featured-ring,
   .cert-seal-ring {
-    animation: none;
-  }
-  .ach-data-ticker span {
     animation: none;
   }
   .ach-ambient-1,

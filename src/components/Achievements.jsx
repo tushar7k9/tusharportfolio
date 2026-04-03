@@ -313,16 +313,8 @@ const FeaturedCard = ({ achievement, index, onViewCert }) => {
       {/* Top accent bar */}
       <div className="ach-top-bar" />
 
-      {/* Scan line sweep on hover */}
-      <div className="ach-scan-line" />
-
-      {/* Corner brackets */}
-      <div className="ach-corners">
-        <span className="cb cb-tl" />
-        <span className="cb cb-tr" />
-        <span className="cb cb-bl" />
-        <span className="cb cb-br" />
-      </div>
+      {/* Soft hover glow */}
+      <div className="ach-hover-glow" />
 
       {/* Background number watermark */}
       <span className="ach-num-watermark">{num}</span>
@@ -528,9 +520,6 @@ const Achievements = () => {
       {/* Cursor spotlight */}
       <div className="ach-spotlight" />
 
-      {/* Scanlines texture */}
-      <div className="ach-scanlines" />
-
       {/* Ambient glow blobs */}
       <div className="ach-ambient-1" />
       <div className="ach-ambient-2" />
@@ -539,15 +528,6 @@ const Achievements = () => {
 
         {/* ── Header ── */}
         <header className="achievements-header">
-
-          {/* Data stream ticker */}
-          <div className="ach-data-ticker">
-            <span>
-              0x4ECH · SYS_LOAD:OK · RECORDS:{ACHIEVEMENTS.length} · VERIFIED:1 ·
-              RANK:TOP_5% · RATING:1880 · CERTS:ACTIVE · 0xFF · AWS:PRO ·
-              SOLUTIONS_ARCH · CLOUD:CERTIFIED · COMPETITIONS:3 · MILESTONES:1 · PERFORMANCE:2
-            </span>
-          </div>
 
           <h2 className="achievements-title">
             <span className="a-title-line">ACHIEVE</span>
