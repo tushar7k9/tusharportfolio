@@ -170,6 +170,94 @@
   }
 }
 
+/* Jump-to-section button inside terminal output */
+.terminal-jump-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 2px 2px;
+  padding: 5px 14px 5px 10px;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--jump-color) 35%, transparent);
+  border-radius: 4px;
+  color: var(--jump-color);
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  animation: jumpIdlePulse 3s ease-in-out infinite;
+}
+
+/* Idle scanline sweep */
+.terminal-jump-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--jump-color) 18%, transparent),
+    transparent
+  );
+  animation: jumpScanline 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes jumpScanline {
+  0%   { left: -60%; }
+  60%  { left: 120%; }
+  100% { left: 120%; }
+}
+
+@keyframes jumpIdlePulse {
+  0%, 100% { box-shadow: 0 0 0px color-mix(in srgb, var(--jump-color) 0%, transparent); }
+  50%       { box-shadow: 0 0 8px color-mix(in srgb, var(--jump-color) 25%, transparent); }
+}
+
+/* Hover state */
+.terminal-jump-btn.jump-active {
+  border-color: var(--jump-color);
+  background: color-mix(in srgb, var(--jump-color) 10%, transparent);
+  transform: translateX(5px);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--jump-color) 30%, transparent);
+  animation: none;
+}
+
+.terminal-jump-btn.jump-active::before {
+  animation: none;
+}
+
+.jump-arrow {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.terminal-jump-btn.jump-active .jump-arrow {
+  opacity: 1;
+}
+
+.jump-label {
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  min-width: 11ch;
+}
+
+.jump-chevron {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+}
+
+.terminal-jump-btn.jump-active .jump-chevron {
+  transform: translateX(4px);
+}
+
 /* Hidden input — visually hidden but stays in flow to prevent scroll jump on focus */
 .terminal-hidden-input {
   position: fixed;

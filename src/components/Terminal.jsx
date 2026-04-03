@@ -31,6 +31,8 @@ const COMMANDS = {
     '  When I\'m not coding, you\'ll find me exploring new technologies,',
     '  solving problems on LeetCode, or working on side projects.',
     '',
+    { type: 'jump', label: 'Go to About', sectionIndex: 1, color: '#9333ea' },
+    '',
   ],
 
   skills: () => [
@@ -42,6 +44,8 @@ const COMMANDS = {
     '  DevOps        Docker, AWS, CI/CD, Git',
     '  Tools         VS Code, Figma, Linux, Postman',
     '',
+    { type: 'jump', label: 'Go to Skills', sectionIndex: 2, color: '#4ecdc4' },
+    '',
   ],
 
   experience: () => [
@@ -52,8 +56,7 @@ const COMMANDS = {
     '  │  and solving complex engineering problems.    │',
     '  └─────────────────────────────────────────────┘',
     '',
-    '  Type "about" for more details, or "contact"',
-    '  to reach out directly.',
+    { type: 'jump', label: 'Go to Experience', sectionIndex: 3, color: '#FF79C6' },
     '',
   ],
 
@@ -70,9 +73,12 @@ const COMMANDS = {
 
   education: () => [
     '',
-    '  🎓 Computer Science & Engineering',
+    '  🎓 B.Tech — Computer Science & Engineering',
+    '     R&S Institute of Technology',
+    '     2019 — 2023',
+    '',
     '     Focused on algorithms, data structures,',
-    '     and software engineering principles.',
+    '     software engineering, and system design.',
     '',
   ],
 
@@ -83,6 +89,8 @@ const COMMANDS = {
     '  LinkedIn  linkedin.com/in/tushar-ab0964213',
     '',
     '  Feel free to reach out!',
+    '',
+    { type: 'jump', label: 'Go to Contact', sectionIndex: 4, color: '#ff6b6b' },
     '',
   ],
 
@@ -108,6 +116,54 @@ const COMMANDS = {
 const TYPING_SPEED = 60;
 const INITIAL_DELAY = 800;
 const AVAILABLE_COMMANDS = Object.keys(COMMANDS).concat('clear');
+
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&';
+
+const JumpButton = ({ label, sectionIndex, color }) => {
+  const [display, setDisplay] = React.useState(label);
+  const [active, setActive] = React.useState(false);
+  const frameRef = React.useRef(null);
+  const iterRef = React.useRef(0);
+
+  const scramble = React.useCallback(() => {
+    let iter = 0;
+    clearInterval(frameRef.current);
+    frameRef.current = setInterval(() => {
+      setDisplay(
+        label.split('').map((char, i) => {
+          if (char === ' ') return ' ';
+          if (i < iter) return label[i];
+          return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+        }).join('')
+      );
+      iter += 0.6;
+      if (iter >= label.length) {
+        clearInterval(frameRef.current);
+        setDisplay(label);
+      }
+    }, 30);
+  }, [label]);
+
+  React.useEffect(() => () => clearInterval(frameRef.current), []);
+
+  return (
+    <button
+      className={`terminal-jump-btn ${active ? 'jump-active' : ''}`}
+      style={{ '--jump-color': color }}
+      onMouseEnter={() => { setActive(true); scramble(); }}
+      onMouseLeave={() => { setActive(false); setDisplay(label); clearInterval(frameRef.current); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        const section = document.querySelectorAll('.page-section')[sectionIndex];
+        if (section) section.scrollIntoView({ behavior: 'smooth' });
+      }}
+    >
+      <span className="jump-arrow">⬡</span>
+      <span className="jump-label">{display}</span>
+      <span className="jump-chevron">→</span>
+    </button>
+  );
+};
 
 const Terminal = () => {
   const [history, setHistory] = useState([]);
@@ -323,11 +379,17 @@ const Terminal = () => {
             </div>
           ) : (
             <div key={i} className="terminal-output">
-              {entry.content.map((line, j) => (
-                <div key={j} className="terminal-line output-line">
-                  {line}
-                </div>
-              ))}
+              {entry.content.map((line, j) =>
+                line && typeof line === 'object' && line.type === 'jump' ? (
+                  <div key={j} className="terminal-line output-line">
+                    <JumpButton label={line.label} sectionIndex={line.sectionIndex} color={line.color} />
+                  </div>
+                ) : (
+                  <div key={j} className="terminal-line output-line">
+                    {line}
+                  </div>
+                )
+              )}
             </div>
           )
         )}

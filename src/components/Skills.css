@@ -69,12 +69,7 @@
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0.05em;
   margin: 0;
-  opacity: 0;
   transition: opacity 0.05s linear;
-}
-
-.skills-sticky.animate-in .skills-subtitle {
-  animation: skillTitleUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
 }
 
 @keyframes skillTitleUp {

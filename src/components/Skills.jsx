@@ -380,18 +380,21 @@ const Skills = () => {
   // Phase 2 (0.15-0.8): sphere grows, filters glide to top and scale up
   // Phase 3 (0.8-1.0): fully expanded, interactive zone
   const p = scrollProgress;
-  const headerOpacity = Math.max(0, 1 - p * 3);           // fades 0→0.33
-  const headerY = p * -60;                                  // slides up
+
+  // Header: original speed — fades 0→0.33
+  const headerOpacity = Math.max(0, 1 - p * 3);
+  const headerY = p * -60;
+
+  // Subtitle: starts invisible, fades in when visible, then fades out fast before filter overlaps
+  const subtitleOpacity = !isVisible ? 0 : Math.max(0, 1 - p * 7);
+
   const filterScale = 1 + Math.min(p, 0.8) * 0.25;        // 1 → 1.2
-  const filterRise = Math.min(p * 1.25, 1);                // 0 → 1 (normalized progress for filter movement)
-  // Calculate actual distance: filters need to travel from natural position up to top of sticky (past header + padding)
-  // sticky padding-top ~80px + header ~180px + margin ~30px ≈ 290px
-  const filterTranslateY = filterRise * -290;               // glide all the way to top
-  const filterBgOpacity = Math.max(0, (filterRise - 0.5) * 2); // bg fades in during second half of rise
-  const sphereScale = 1 + Math.min(Math.max(p - 0.15, 0) / 0.65, 1) * 0.6; // 1 → 1.6
-  const sphereRise = Math.min(p * 1.25, 1);               // synced with filter rise
-  const sphereTranslateY = sphereRise * -140;              // sphere follows filters upward, tighter gap
-  const subtitleOpacity = Math.max(0, 1 - p * 4);
+  const filterRise = Math.min(p * 1.25, 1);
+  const filterTranslateY = filterRise * -290;
+  const filterBgOpacity = Math.max(0, (filterRise - 0.5) * 2);
+  const sphereScale = 1 + Math.min(Math.max(p - 0.15, 0) / 0.65, 1) * 0.6;
+  const sphereRise = Math.min(p * 1.25, 1);
+  const sphereTranslateY = sphereRise * -140;
 
   return (
     <div className="skills-page" ref={sectionRef}>
