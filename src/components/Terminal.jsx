@@ -51,9 +51,9 @@ const COMMANDS = {
   experience: () => [
     '',
     '  ┌─────────────────────────────────────────────┐',
-    '  │  Full-Stack Developer                        │',
-    '  │  Building scalable web applications          │',
-    '  │  and solving complex engineering problems.    │',
+    '  │  Full-Stack Developer                       │',
+    '  │  Building scalable web applications         │',
+    '  │  and solving complex engineering problems.  │',
     '  └─────────────────────────────────────────────┘',
     '',
     { type: 'jump', label: 'Go to Experience', sectionIndex: 3, color: '#FF79C6' },
