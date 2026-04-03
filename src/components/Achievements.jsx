@@ -353,7 +353,7 @@ const FeaturedCard = ({ achievement, index, onViewCert }) => {
 };
 
 // ── Regular card ──────────────────────────────────────────────────────────
-const AchCard = ({ achievement, index, onViewCert }) => {
+const AchCard = ({ achievement, index, col, onViewCert }) => {
   const cardRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -415,9 +415,10 @@ const AchCard = ({ achievement, index, onViewCert }) => {
     <div
       ref={cardRef}
       className={`ach-card${isVisible ? ' visible' : ''}${isHovered ? ' hovered' : ''}`}
+      data-col={col}
       style={{
         '--cat-color': cat.color,
-        '--delay': `${index * 0.1}s`,
+        '--delay': `${index * 0.16}s`,
         '--shimmer-x': `${shimmer.x}%`,
         '--shimmer-y': `${shimmer.y}%`,
       }}
@@ -560,7 +561,7 @@ const Achievements = () => {
         {/* ── Grid ── */}
         <div className="ach-grid">
           {regular.map((a, i) => (
-            <AchCard key={a.id} achievement={a} index={i} onViewCert={setCertModal} />
+            <AchCard key={a.id} achievement={a} index={i} col={i % 3} onViewCert={setCertModal} />
           ))}
         </div>
 
