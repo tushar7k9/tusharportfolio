@@ -1,7 +1,14 @@
 /* ============================
    Achievements Section
-   Premium — aligned with portfolio design language
+   Maximum drama — crossing design limits
    ============================ */
+
+/* ── @property for animated conic gradient ───────────────────────────────── */
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 
 .achievements-page {
   min-height: 100vh;
@@ -12,27 +19,79 @@
   overflow: hidden;
 }
 
-/* Ambient corner glows — same technique as other sections */
+/* ── StarField canvas ─────────────────────────────────────────────────────── */
+.ach-starfield {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+}
+
+/* ── Cursor spotlight ─────────────────────────────────────────────────────── */
+.ach-spotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    700px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(78, 205, 196, 0.045) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.08s linear;
+}
+
+/* ── Scanlines texture ────────────────────────────────────────────────────── */
+.ach-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.011) 2px,
+    rgba(255, 255, 255, 0.011) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Ambient corner glows — pulsing ──────────────────────────────────────── */
 .ach-ambient-1 {
   position: absolute;
   top: -120px;
   right: -80px;
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(circle, rgba(78,205,196,0.055) 0%, transparent 68%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(78,205,196,0.065) 0%, transparent 68%);
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
+  animation: ambientPulse1 8s ease-in-out infinite;
 }
 
 .ach-ambient-2 {
   position: absolute;
   bottom: -80px;
   left: -60px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(147,51,234,0.04) 0%, transparent 68%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(147,51,234,0.05) 0%, transparent 68%);
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
+  animation: ambientPulse2 10s ease-in-out infinite;
+}
+
+@keyframes ambientPulse1 {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%       { opacity: 1.0; transform: scale(1.12); }
+}
+
+@keyframes ambientPulse2 {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1.0; transform: scale(1.18); }
 }
 
 /* ── Content wrapper ─────────────────────────────────────────────────────── */
@@ -40,13 +99,55 @@
   max-width: 1100px;
   margin: 0 auto;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
 .achievements-header {
   text-align: center;
   margin-bottom: 60px;
+}
+
+/* Data ticker / scrolling stream */
+.ach-data-ticker {
+  overflow: hidden;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.ach-data-ticker::before,
+.ach-data-ticker::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  z-index: 2;
+}
+
+.ach-data-ticker::before {
+  left: 0;
+  background: linear-gradient(90deg, #000, transparent);
+}
+
+.ach-data-ticker::after {
+  right: 0;
+  background: linear-gradient(270deg, #000, transparent);
+}
+
+.ach-data-ticker span {
+  display: inline-block;
+  white-space: nowrap;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.57rem;
+  letter-spacing: 0.12em;
+  color: rgba(78, 205, 196, 0.28);
+  animation: tickerScroll 28s linear infinite;
+}
+
+@keyframes tickerScroll {
+  from { transform: translateX(60vw); }
+  to   { transform: translateX(-100%); }
 }
 
 .achievements-title {
@@ -122,6 +223,12 @@
   font-size: 0.62rem;
   letter-spacing: 0.12em;
   color: color-mix(in srgb, var(--mc) 80%, rgba(255,255,255,0.6));
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.ach-meta-pill:hover {
+  background: color-mix(in srgb, var(--mc) 12%, transparent);
+  border-color: color-mix(in srgb, var(--mc) 50%, transparent);
 }
 
 .ach-meta-dot {
@@ -129,7 +236,13 @@
   height: 5px;
   border-radius: 50%;
   background: var(--mc);
-  box-shadow: 0 0 5px var(--mc);
+  box-shadow: 0 0 6px var(--mc);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 4px var(--mc); }
+  50%       { box-shadow: 0 0 10px var(--mc), 0 0 20px var(--mc); }
 }
 
 .ach-meta-count {
@@ -140,17 +253,17 @@
 
 /* ── Shared card elements ─────────────────────────────────────────────────── */
 
-/* Top accent bar — 2px line, same technique as the section dividers */
+/* Top accent bar */
 .ach-top-bar {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--cat-color);
+  background: linear-gradient(90deg, transparent, var(--cat-color), transparent);
   border-radius: 2px 2px 0 0;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Background number watermark */
@@ -187,6 +300,81 @@
   letter-spacing: 0.06em;
 }
 
+/* ── Corner brackets ──────────────────────────────────────────────────────── */
+.ach-corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cb {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cb-tl {
+  top: 7px; left: 7px;
+  border-top: 1.5px solid var(--cat-color);
+  border-left: 1.5px solid var(--cat-color);
+  transform: translate(-5px, -5px);
+}
+.cb-tr {
+  top: 7px; right: 7px;
+  border-top: 1.5px solid var(--cat-color);
+  border-right: 1.5px solid var(--cat-color);
+  transform: translate(5px, -5px);
+}
+.cb-bl {
+  bottom: 7px; left: 7px;
+  border-bottom: 1.5px solid var(--cat-color);
+  border-left: 1.5px solid var(--cat-color);
+  transform: translate(-5px, 5px);
+}
+.cb-br {
+  bottom: 7px; right: 7px;
+  border-bottom: 1.5px solid var(--cat-color);
+  border-right: 1.5px solid var(--cat-color);
+  transform: translate(5px, 5px);
+}
+
+/* Show brackets on hover */
+.ach-card.hovered .cb,
+.ach-featured.hovered .cb {
+  opacity: 0.75;
+  transform: translate(0, 0);
+}
+
+/* ── Scan line sweep ──────────────────────────────────────────────────────── */
+.ach-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: 0;
+  background: linear-gradient(90deg, transparent, var(--cat-color), transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.ach-card.hovered .ach-scan-line {
+  animation: scanDown 1s ease-out forwards;
+}
+
+.ach-featured.hovered .ach-scan-line {
+  animation: scanDown 1.2s ease-out forwards;
+}
+
+@keyframes scanDown {
+  0%   { top: 0%;   opacity: 0.9; }
+  80%  { opacity: 0.7; }
+  100% { top: 100%; opacity: 0; }
+}
+
 /* ── Featured card ────────────────────────────────────────────────────────── */
 .ach-featured {
   position: relative;
@@ -208,18 +396,25 @@
 .ach-featured.visible {
   opacity: 1;
   transform: translateY(0);
-  animation: cardIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--delay) backwards;
+  animation: cardIn 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s backwards,
+             featuredGlow 5s ease-in-out 1.5s infinite;
+}
+
+@keyframes featuredGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(78,205,196,0.04); }
+  50%       { box-shadow: 0 0 50px rgba(78,205,196,0.12), 0 0 100px rgba(78,205,196,0.04); }
 }
 
 .ach-featured:hover {
   border-color: color-mix(in srgb, var(--cat-color) 45%, transparent);
   box-shadow:
-    0 0 40px color-mix(in srgb, var(--cat-color) 10%, transparent),
+    0 0 40px color-mix(in srgb, var(--cat-color) 14%, transparent),
     0 20px 60px rgba(0,0,0,0.5);
 }
 
 .ach-featured:hover .ach-top-bar {
   opacity: 1;
+  box-shadow: 0 0 12px var(--cat-color);
 }
 
 .ach-featured:hover .ach-num-watermark {
@@ -246,6 +441,10 @@
   margin: 0;
   color: #fff;
   line-height: 1.1;
+}
+
+.ach-featured.hovered .ach-featured-title {
+  animation: titleGlitch 0.45s ease forwards;
 }
 
 .ach-featured-subtitle {
@@ -331,7 +530,7 @@
 .ach-featured-ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--cat-color) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-color) 22%, transparent);
   inset: 0;
 }
 
@@ -340,8 +539,8 @@
 .ring-3 { animation: ringExpand 3s ease-in-out 2s infinite; inset: -28px; border-style: dashed; }
 
 @keyframes ringExpand {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50%       { opacity: 1;   transform: scale(1.04); }
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%       { opacity: 1;    transform: scale(1.04); }
 }
 
 .ach-featured-issuer {
@@ -404,7 +603,7 @@
 
 .ach-card.hovered .ach-top-bar {
   opacity: 1;
-  box-shadow: 0 0 8px var(--cat-color);
+  box-shadow: 0 0 10px var(--cat-color);
 }
 
 .ach-card.hovered .ach-num-watermark {
@@ -415,6 +614,20 @@
   opacity: 1;
 }
 
+/* Title glitch on hover */
+.ach-card.hovered .ach-title {
+  animation: titleGlitch 0.4s ease forwards;
+}
+
+@keyframes titleGlitch {
+  0%   { text-shadow: none; transform: translateX(0); }
+  15%  { text-shadow: -2px 0 #FF79C6, 2px 0 #4ecdc4; transform: translateX(2px); }
+  30%  { text-shadow: 2px 0 #FF79C6, -2px 0 #9333ea; transform: translateX(-2px); }
+  50%  { text-shadow: -1px 0 #4ecdc4; transform: translateX(1px); }
+  70%  { text-shadow: 1px 0 #FF79C6; transform: translateX(0); }
+  100% { text-shadow: none; transform: translateX(0); }
+}
+
 /* Shimmer */
 .ach-shimmer {
   position: absolute;
@@ -422,8 +635,8 @@
   border-radius: 16px;
   background: radial-gradient(
     circle at var(--shimmer-x, 50%) var(--shimmer-y, 50%),
-    rgba(255,255,255,0.06) 0%,
-    transparent 60%
+    rgba(255,255,255,0.065) 0%,
+    transparent 58%
   );
   pointer-events: none;
   opacity: 0;
@@ -435,7 +648,7 @@
   opacity: 1;
 }
 
-/* Card content — above shimmer */
+/* Card content — above shimmer + scan layer */
 .ach-category-tag,
 .ach-icon-row,
 .ach-title,
@@ -465,8 +678,8 @@
 }
 
 .ach-card.hovered .ach-icon {
-  transform: scale(1.12) translateY(-2px);
-  filter: drop-shadow(0 0 12px var(--cat-color));
+  transform: scale(1.14) translateY(-3px);
+  filter: drop-shadow(0 0 14px var(--cat-color));
 }
 
 .ach-title {
@@ -865,12 +1078,15 @@
     width: 100%;
     justify-content: center;
   }
+  .ach-data-ticker {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ach-featured,
   .ach-card {
-    animation: none;
+    animation: none !important;
     opacity: 1;
     transform: none;
   }
@@ -880,6 +1096,16 @@
   }
   .ach-featured-ring,
   .cert-seal-ring {
+    animation: none;
+  }
+  .ach-data-ticker span {
+    animation: none;
+  }
+  .ach-ambient-1,
+  .ach-ambient-2 {
+    animation: none;
+  }
+  .ach-meta-dot {
     animation: none;
   }
 }

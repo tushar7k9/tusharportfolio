@@ -79,6 +79,111 @@ const ACHIEVEMENTS = [
   },
 ];
 
+// ── StarField Canvas ──────────────────────────────────────────────────────
+const StarField = ({ mousePosRef }) => {
+  const canvasRef = useRef(null);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const parent = canvas.parentElement;
+
+    const resize = () => {
+      canvas.width = parent.offsetWidth;
+      canvas.height = parent.offsetHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const stars = Array.from({ length: 88 }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      size: Math.random() * 1.4 + 0.15,
+      depth: Math.random() * 0.8 + 0.2,
+      phase: Math.random() * Math.PI * 2,
+    }));
+
+    const shooters = Array.from({ length: 3 }, (_, i) => ({
+      active: false,
+      x: 0, y: 0, dx: 0, dy: 0, alpha: 0,
+      timer: 0,
+      nextFire: (i + 1) * 280 + Math.random() * 200,
+    }));
+
+    let t = 0;
+    const draw = () => {
+      t++;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const { x: mnx, y: mny } = mousePosRef.current;
+
+      // Regular stars
+      stars.forEach(s => {
+        const twinkle = Math.sin(t * 0.022 + s.phase);
+        const alpha = (0.07 + s.depth * 0.36) * (0.68 + twinkle * 0.32);
+        const px = s.x * w + (mnx - 0.5) * s.depth * 45;
+        const py = s.y * h + (mny - 0.5) * s.depth * 28;
+        ctx.beginPath();
+        ctx.arc(px, py, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+        ctx.fill();
+      });
+
+      // Shooting stars
+      shooters.forEach(s => {
+        s.timer++;
+        if (!s.active && s.timer >= s.nextFire) {
+          s.active = true;
+          s.timer = 0;
+          s.x = Math.random() * w * 0.65;
+          s.y = Math.random() * h * 0.45;
+          const a = (Math.random() * 22 + 12) * Math.PI / 180;
+          const spd = Math.random() * 10 + 7;
+          s.dx = Math.cos(a) * spd;
+          s.dy = Math.sin(a) * spd;
+          s.alpha = 0.85;
+        }
+        if (s.active) {
+          const tailLen = 55;
+          const x0 = s.x - s.dx * (tailLen / 10);
+          const y0 = s.y - s.dy * (tailLen / 10);
+          const grad = ctx.createLinearGradient(x0, y0, s.x, s.y);
+          grad.addColorStop(0, 'transparent');
+          grad.addColorStop(1, `rgba(255,255,255,${s.alpha.toFixed(3)})`);
+          ctx.beginPath();
+          ctx.moveTo(x0, y0);
+          ctx.lineTo(s.x, s.y);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          s.x += s.dx;
+          s.y += s.dy;
+          s.alpha -= 0.024;
+          if (s.alpha <= 0 || s.x > w + 100) {
+            s.active = false;
+            s.timer = 0;
+            s.nextFire = Math.random() * 500 + 300;
+          }
+        }
+      });
+
+      rafRef.current = requestAnimationFrame(draw);
+    };
+
+    rafRef.current = requestAnimationFrame(draw);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('resize', resize);
+    };
+  }, [mousePosRef]);
+
+  return <canvas ref={canvasRef} className="ach-starfield" />;
+};
+
 // ── Certificate Modal ─────────────────────────────────────────────────────
 const CertificateModal = ({ achievement, onClose }) => {
   const cat = CATEGORY[achievement.category];
@@ -177,10 +282,11 @@ const CertificateModal = ({ achievement, onClose }) => {
   );
 };
 
-// ── Featured card (AWS) ───────────────────────────────────────────────────
+// ── Featured card ─────────────────────────────────────────────────────────
 const FeaturedCard = ({ achievement, index, onViewCert }) => {
   const cardRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const cat = CATEGORY[achievement.category];
 
   useEffect(() => {
@@ -199,11 +305,24 @@ const FeaturedCard = ({ achievement, index, onViewCert }) => {
   return (
     <div
       ref={cardRef}
-      className={`ach-featured${isVisible ? ' visible' : ''}`}
+      className={`ach-featured${isVisible ? ' visible' : ''}${isHovered ? ' hovered' : ''}`}
       style={{ '--cat-color': cat.color, '--delay': '0s' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Top accent bar */}
       <div className="ach-top-bar" />
+
+      {/* Scan line sweep on hover */}
+      <div className="ach-scan-line" />
+
+      {/* Corner brackets */}
+      <div className="ach-corners">
+        <span className="cb cb-tl" />
+        <span className="cb cb-tr" />
+        <span className="cb cb-bl" />
+        <span className="cb cb-br" />
+      </div>
 
       {/* Background number watermark */}
       <span className="ach-num-watermark">{num}</span>
@@ -320,6 +439,17 @@ const AchCard = ({ achievement, index, onViewCert }) => {
       {/* Holographic shimmer */}
       <div className="ach-shimmer" />
 
+      {/* Scan line sweep */}
+      <div className="ach-scan-line" />
+
+      {/* Corner brackets */}
+      <div className="ach-corners">
+        <span className="cb cb-tl" />
+        <span className="cb cb-tr" />
+        <span className="cb cb-bl" />
+        <span className="cb cb-br" />
+      </div>
+
       {/* Background number watermark */}
       <span className="ach-num-watermark">{num}</span>
 
@@ -357,6 +487,7 @@ const Achievements = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [certModal, setCertModal] = useState(null);
   const sectionRef = useRef(null);
+  const mousePosRef = useRef({ x: 0.5, y: 0.5 });
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -369,13 +500,38 @@ const Achievements = () => {
     return () => obs.disconnect();
   }, []);
 
+  const handleMouseMove = useCallback((e) => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    mousePosRef.current = {
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    };
+    el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+  }, []);
+
   const featured = ACHIEVEMENTS.filter(a => a.featured);
   const regular  = ACHIEVEMENTS.filter(a => !a.featured);
 
   return (
-    <div className="achievements-page" ref={sectionRef}>
+    <div
+      className="achievements-page"
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      style={{ '--mx': '50%', '--my': '50%' }}
+    >
+      {/* Canvas starfield */}
+      <StarField mousePosRef={mousePosRef} />
 
-      {/* Ambient glow blobs (match portfolio style) */}
+      {/* Cursor spotlight */}
+      <div className="ach-spotlight" />
+
+      {/* Scanlines texture */}
+      <div className="ach-scanlines" />
+
+      {/* Ambient glow blobs */}
       <div className="ach-ambient-1" />
       <div className="ach-ambient-2" />
 
@@ -383,6 +539,16 @@ const Achievements = () => {
 
         {/* ── Header ── */}
         <header className="achievements-header">
+
+          {/* Data stream ticker */}
+          <div className="ach-data-ticker">
+            <span>
+              0x4ECH · SYS_LOAD:OK · RECORDS:{ACHIEVEMENTS.length} · VERIFIED:1 ·
+              RANK:TOP_5% · RATING:1880 · CERTS:ACTIVE · 0xFF · AWS:PRO ·
+              SOLUTIONS_ARCH · CLOUD:CERTIFIED · COMPETITIONS:3 · MILESTONES:1 · PERFORMANCE:2
+            </span>
+          </div>
+
           <h2 className="achievements-title">
             <span className="a-title-line">ACHIEVE</span>
             <span className="a-title-line a-title-highlight">MENTS</span>
