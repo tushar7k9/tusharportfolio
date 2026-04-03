@@ -1,6 +1,97 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import './Terminal.css';
 
+// ── Game data ──────────────────────────────────────────────────────────────
+const GAME_LAYERS = [
+  {
+    title: '── PUZZLE 1 / 3  ·  THE RIDDLE ─────────────────',
+    lines: [
+      '  I have branches but no leaves,',
+      '  commits but no crimes.',
+      '  Developers use me to travel through time.',
+      '',
+      '  What am I?',
+    ],
+    answers: ['git'],
+    hint: 'A version control system by Linus Torvalds, 2005.',
+    success: 'Clever. Firewall layer 1 crumbles.',
+  },
+  {
+    title: '── PUZZLE 2 / 3  ·  THE CIPHER ─────────────────',
+    lines: [
+      '  Decode this ROT13 encoded string:',
+      '',
+      '  > PBQR VF CBRGEL',
+      '',
+      '  (each letter is shifted 13 places in the alphabet)',
+    ],
+    answers: ['code is poetry'],
+    hint: 'WordPress once used this exact phrase as their tagline.',
+    success: 'Impressive. Firewall layer 2 falls.',
+  },
+  {
+    title: '── PUZZLE 3 / 3  ·  THE SEQUENCE ───────────────',
+    lines: [
+      '  What comes next in this sequence?',
+      '',
+      '  0  1  1  2  3  5  8  13  21  ___',
+      '',
+      '  (enter only the number)',
+    ],
+    answers: ['34'],
+    hint: 'Each number = sum of the two before it. Named after Leonardo of Pisa.',
+    success: 'Flawless. Root access established.',
+  },
+];
+
+const HACK_INTRO = [
+  '',
+  { type: 'colored', color: '#4ecdc4', content: '  ██╗  ██╗ █████╗  ██████╗██╗  ██╗' },
+  { type: 'colored', color: '#4ecdc4', content: '  ██║  ██║██╔══██╗██╔════╝██║ ██╔╝' },
+  { type: 'colored', color: '#4ecdc4', content: '  ███████║███████║██║     █████╔╝ ' },
+  { type: 'colored', color: '#4ecdc4', content: '  ██╔══██║██╔══██║██║     ██╔═██╗ ' },
+  { type: 'colored', color: '#4ecdc4', content: '  ██║  ██║██║  ██║╚██████╗██║  ██╗' },
+  { type: 'colored', color: '#4ecdc4', content: '  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝' },
+  '',
+  { type: 'colored', color: 'rgba(255,255,255,0.5)', content: '  Target   : portfolio.tushar.dev' },
+  { type: 'colored', color: 'rgba(255,255,255,0.5)', content: '  Layers   : 3 security puzzles' },
+  { type: 'colored', color: 'rgba(255,255,255,0.5)', content: '  Commands : answer <text>  |  hint  |  quit' },
+  '',
+];
+
+const HACK_SUCCESS = [
+  '',
+  { type: 'colored', color: '#7ee787', content: '  ┌─────────────────────────────────────────────┐' },
+  { type: 'colored', color: '#7ee787', content: '  │   ✓  ALL LAYERS BYPASSED — ACCESS GRANTED   │' },
+  { type: 'colored', color: '#7ee787', content: '  └─────────────────────────────────────────────┘' },
+  '',
+  { type: 'colored', color: '#4ecdc4', content: '  ╔═════════════════════════════════════════════╗' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║          CLASSIFIED INTEL UNLOCKED          ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ╠═════════════════════════════════════════════╣' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║                                             ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║  fav_algorithm  : Binary Search             ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║  fav_language   : JavaScript                ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║  build_time     : 2 weeks of caffeine       ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║  secret_quote   : "The answer is always 42" ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║  power_level    : ████████░░  over 9000     ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ║                                             ║' },
+  { type: 'colored', color: '#4ecdc4', content: '  ╚═════════════════════════════════════════════╝' },
+  '',
+  { type: 'colored', color: 'rgba(255,255,255,0.4)', content: '  Type "hack" to run again.' },
+  '',
+];
+
+const HACK_GAMEOVER = [
+  '',
+  { type: 'colored', color: '#ff6b6b', content: '  ┌──────────────────────────────────────────────┐' },
+  { type: 'colored', color: '#ff6b6b', content: '  │    ✗  ACCESS DENIED — 3 FAILED ATTEMPTS      │' },
+  { type: 'colored', color: '#ff6b6b', content: '  └──────────────────────────────────────────────┘' },
+  '',
+  { type: 'colored', color: 'rgba(255,255,255,0.4)', content: '  Security lockout engaged. Type "hack" to retry.' },
+  '',
+];
+
+// ── Static commands ────────────────────────────────────────────────────────
 const COMMANDS = {
   help: () => [
     '',
@@ -16,6 +107,7 @@ const COMMANDS = {
     '    pwd          Print working directory',
     '    ls           List available files',
     '    cat <file>   Read a file',
+    '    hack         Play a hacking puzzle game 🎮',
     '    clear        Clear the terminal',
     '    help         Show this help message',
     '',
@@ -101,10 +193,11 @@ const COMMANDS = {
   ls: () => [
     'about.txt    skills.txt    experience.txt',
     'projects.txt education.txt contact.txt',
+    'hack.exe',
   ],
 
   cat: (args) => {
-    const file = args[0]?.replace('.txt', '');
+    const file = args[0]?.replace('.txt', '').replace('.exe', '');
     if (!file) return ['cat: missing operand. Usage: cat <file>'];
     if (COMMANDS[file] && file !== 'cat' && file !== 'clear' && file !== 'help') {
       return COMMANDS[file]([]);
@@ -115,7 +208,7 @@ const COMMANDS = {
 
 const TYPING_SPEED = 60;
 const INITIAL_DELAY = 800;
-const AVAILABLE_COMMANDS = Object.keys(COMMANDS).concat('clear');
+const AVAILABLE_COMMANDS = Object.keys(COMMANDS).concat(['clear', 'hack', 'answer', 'hint', 'quit']);
 
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&';
 
@@ -123,7 +216,6 @@ const JumpButton = ({ label, sectionIndex, color }) => {
   const [display, setDisplay] = React.useState(label);
   const [active, setActive] = React.useState(false);
   const frameRef = React.useRef(null);
-  const iterRef = React.useRef(0);
 
   const scramble = React.useCallback(() => {
     let iter = 0;
@@ -165,6 +257,25 @@ const JumpButton = ({ label, sectionIndex, color }) => {
   );
 };
 
+// ── Helper: render layer block ─────────────────────────────────────────────
+function buildLayerLines(layerIndex, hintsLeft, wrongAttempts) {
+  const layer = GAME_LAYERS[layerIndex];
+  const attemptsLeft = 3 - wrongAttempts;
+  return [
+    { type: 'colored', color: '#4ecdc4', content: `  ${layer.title}` },
+    '',
+    ...layer.lines,
+    '',
+    {
+      type: 'colored',
+      color: 'rgba(255,255,255,0.35)',
+      content: `  attempts: ${attemptsLeft}/3   hints: ${hintsLeft}/2`,
+    },
+    '',
+  ];
+}
+
+// ── Terminal component ─────────────────────────────────────────────────────
 const Terminal = () => {
   const [history, setHistory] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
@@ -175,6 +286,7 @@ const Terminal = () => {
 
   const inputRef = useRef(null);
   const bodyRef = useRef(null);
+  const gameRef = useRef({ active: false, layer: 0, hintsLeft: 2, wrongAttempts: 0 });
   const prefersReducedMotion = useRef(
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -189,6 +301,14 @@ const Terminal = () => {
     }
   }, []);
 
+  const pushHistory = useCallback((inputText, outputLines) => {
+    setHistory((prev) => [
+      ...prev,
+      { type: 'input', content: inputText },
+      { type: 'output', content: outputLines },
+    ]);
+  }, []);
+
   const executeCommand = useCallback((input) => {
     const trimmed = input.trim();
     if (!trimmed) {
@@ -200,6 +320,107 @@ const Terminal = () => {
     const cmd = parts[0].toLowerCase();
     const args = parts.slice(1);
 
+    // ── Game-context commands ──────────────────────────────────────────────
+    if (gameRef.current.active) {
+      if (cmd === 'answer' || cmd === 'guess') {
+        const g = gameRef.current;
+        const userAnswer = args.join(' ').trim().toLowerCase();
+        const currentLayer = GAME_LAYERS[g.layer];
+        const isCorrect = currentLayer.answers.some(
+          (a) => a.toLowerCase() === userAnswer
+        );
+
+        if (isCorrect) {
+          if (g.layer === GAME_LAYERS.length - 1) {
+            // All layers done → success
+            gameRef.current = { active: false, layer: 0, hintsLeft: 2, wrongAttempts: 0 };
+            pushHistory(trimmed, [
+              { type: 'colored', color: '#7ee787', content: `  ✓  ${currentLayer.success}` },
+              '',
+              ...HACK_SUCCESS,
+            ]);
+          } else {
+            // Advance to next layer
+            const nextLayer = g.layer + 1;
+            gameRef.current = { ...g, layer: nextLayer, wrongAttempts: 0 };
+            pushHistory(trimmed, [
+              { type: 'colored', color: '#7ee787', content: `  ✓  ${currentLayer.success}` },
+              '',
+              ...buildLayerLines(nextLayer, gameRef.current.hintsLeft, 0),
+            ]);
+          }
+        } else {
+          const newWrong = g.wrongAttempts + 1;
+          if (newWrong >= 3) {
+            // Game over
+            gameRef.current = { active: false, layer: 0, hintsLeft: 2, wrongAttempts: 0 };
+            pushHistory(trimmed, HACK_GAMEOVER);
+          } else {
+            gameRef.current = { ...g, wrongAttempts: newWrong };
+            pushHistory(trimmed, [
+              { type: 'colored', color: '#ff6b6b', content: `  ✗  Wrong. ${3 - newWrong} attempt${3 - newWrong === 1 ? '' : 's'} remaining.` },
+              '',
+            ]);
+          }
+        }
+        setCommandHistory((prev) => [...prev, trimmed]);
+        setHistoryIndex(-1);
+        return;
+      }
+
+      if (cmd === 'hint') {
+        const g = gameRef.current;
+        if (g.hintsLeft <= 0) {
+          pushHistory(trimmed, [
+            { type: 'colored', color: '#ff6b6b', content: '  No hints remaining.' },
+            '',
+          ]);
+        } else {
+          const newHintsLeft = g.hintsLeft - 1;
+          gameRef.current = { ...g, hintsLeft: newHintsLeft };
+          pushHistory(trimmed, [
+            { type: 'colored', color: '#febc2e', content: `  Hint: ${GAME_LAYERS[g.layer].hint}` },
+            { type: 'colored', color: 'rgba(255,255,255,0.3)', content: `  (${newHintsLeft} hint${newHintsLeft === 1 ? '' : 's'} left)` },
+            '',
+          ]);
+        }
+        setCommandHistory((prev) => [...prev, trimmed]);
+        setHistoryIndex(-1);
+        return;
+      }
+
+      if (cmd === 'quit' || cmd === 'exit') {
+        gameRef.current = { active: false, layer: 0, hintsLeft: 2, wrongAttempts: 0 };
+        pushHistory(trimmed, [
+          { type: 'colored', color: 'rgba(255,255,255,0.4)', content: '  Mission aborted. Security system remains intact.' },
+          '',
+        ]);
+        setCommandHistory((prev) => [...prev, trimmed]);
+        setHistoryIndex(-1);
+        return;
+      }
+    }
+
+    // ── hack command ───────────────────────────────────────────────────────
+    if (cmd === 'hack') {
+      if (gameRef.current.active) {
+        pushHistory(trimmed, [
+          { type: 'colored', color: '#febc2e', content: '  Game already in progress. Use: answer <text> | hint | quit' },
+          '',
+        ]);
+      } else {
+        gameRef.current = { active: true, layer: 0, hintsLeft: 2, wrongAttempts: 0 };
+        pushHistory(trimmed, [
+          ...HACK_INTRO,
+          ...buildLayerLines(0, 2, 0),
+        ]);
+      }
+      setCommandHistory((prev) => [...prev, trimmed]);
+      setHistoryIndex(-1);
+      return;
+    }
+
+    // ── Normal commands ────────────────────────────────────────────────────
     if (cmd === 'clear') {
       setHistory([]);
       return;
@@ -218,7 +439,7 @@ const Terminal = () => {
 
     setCommandHistory((prev) => [...prev, trimmed]);
     setHistoryIndex(-1);
-  }, []);
+  }, [pushHistory]);
 
   // Initial typing animation
   useEffect(() => {
@@ -298,8 +519,8 @@ const Terminal = () => {
         case 'Tab': {
           e.preventDefault();
           if (!currentInput) return;
-          const matches = AVAILABLE_COMMANDS.filter((cmd) =>
-            cmd.startsWith(currentInput.toLowerCase())
+          const matches = AVAILABLE_COMMANDS.filter((c) =>
+            c.startsWith(currentInput.toLowerCase())
           );
           if (matches.length === 1) {
             setCurrentInput(matches[0]);
@@ -316,6 +537,9 @@ const Terminal = () => {
         case 'c': {
           if (e.ctrlKey) {
             e.preventDefault();
+            if (gameRef.current.active) {
+              gameRef.current = { active: false, layer: 0, hintsLeft: 2, wrongAttempts: 0 };
+            }
             setHistory((prev) => [
               ...prev,
               { type: 'input', content: currentInput + '^C' },
@@ -343,6 +567,31 @@ const Terminal = () => {
     ),
     []
   );
+
+  // ── Render a single output line ──────────────────────────────────────────
+  const renderLine = (line, j) => {
+    if (line && typeof line === 'object') {
+      if (line.type === 'jump') {
+        return (
+          <div key={j} className="terminal-line output-line">
+            <JumpButton label={line.label} sectionIndex={line.sectionIndex} color={line.color} />
+          </div>
+        );
+      }
+      if (line.type === 'colored') {
+        return (
+          <div key={j} className="terminal-line output-line" style={{ color: line.color }}>
+            {line.content}
+          </div>
+        );
+      }
+    }
+    return (
+      <div key={j} className="terminal-line output-line">
+        {line}
+      </div>
+    );
+  };
 
   return (
     <div className="terminal" onClick={focusInput}>
@@ -379,17 +628,7 @@ const Terminal = () => {
             </div>
           ) : (
             <div key={i} className="terminal-output">
-              {entry.content.map((line, j) =>
-                line && typeof line === 'object' && line.type === 'jump' ? (
-                  <div key={j} className="terminal-line output-line">
-                    <JumpButton label={line.label} sectionIndex={line.sectionIndex} color={line.color} />
-                  </div>
-                ) : (
-                  <div key={j} className="terminal-line output-line">
-                    {line}
-                  </div>
-                )
-              )}
+              {entry.content.map((line, j) => renderLine(line, j))}
             </div>
           )
         )}
