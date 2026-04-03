@@ -6,10 +6,11 @@ import leetcodeBg from '../images/leetcode_about_page_bg.png';
 
 const About = () => {
   const revealImgRef = useRef(null);
+  const [onTerminal, setOnTerminal] = React.useState(false);
 
   return (
     <div className="about-page">
-      {/* Content at the top */}
+      {/* Content at the top — NO image here */}
       <div className="about-content-top">
         <div className="content-container">
           <h1 className="about-title">
@@ -29,9 +30,9 @@ const About = () => {
         </div>
       </div>
 
-      {/* Laser Flow Section */}
+      {/* Shared container: Laser + Terminal — image spans both */}
       <div
-        className="laser-flow-section"
+        className="about-visual-area"
         onMouseMove={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = e.clientX - rect.left;
@@ -39,7 +40,7 @@ const About = () => {
           const el = revealImgRef.current;
           if (el) {
             el.style.setProperty("--mx", `${x}px`);
-            el.style.setProperty("--my", `${y + rect.height * 0.5}px`);
+            el.style.setProperty("--my", `${y}px`);
           }
         }}
         onMouseLeave={() => {
@@ -50,42 +51,46 @@ const About = () => {
           }
         }}
       >
-        <LaserFlow
-          className="laser-flow-background"
-          horizontalBeamOffset={0.0}
-          verticalBeamOffset={0.0}
-          color="#FF79C6"
-          wispDensity={1.2}
-          flowSpeed={0.4}
-          verticalSizing={2.5}
-          horizontalSizing={0.8}
-          fogIntensity={0.6}
-          fogScale={0.25}
-          wispSpeed={12.0}
-          wispIntensity={4.0}
-          flowStrength={0.3}
-          decay={1.0}
-          falloffStart={1.5}
-          fogFallSpeed={0.5}
-          mouseTiltStrength={0.02}
-        />
-
-        {/* Interactive Reveal Effect */}
+        {/* Leetcode BG — revealed by cursor, spans laser + terminal */}
         <img
           ref={revealImgRef}
           src={leetcodeBg}
           className="laser-reveal-overlay"
-          style={{
-            "--mx": "-9999px",
-            "--my": "-9999px",
-          }}
+          style={{ "--mx": "-9999px", "--my": "-9999px", opacity: onTerminal ? 0.15 : 0.45 }}
         />
-      </div>
 
-      {/* Terminal directly below laser — no gap, laser appears to fall onto it */}
-      <div className="terminal-section">
-        <div className="terminal-wrapper">
-          <Terminal />
+        {/* Laser Flow Section */}
+        <div className="laser-flow-section">
+          <LaserFlow
+            className="laser-flow-background"
+            horizontalBeamOffset={0.0}
+            verticalBeamOffset={0.0}
+            color="#FF79C6"
+            wispDensity={1.2}
+            flowSpeed={0.4}
+            verticalSizing={2.5}
+            horizontalSizing={0.8}
+            fogIntensity={0.6}
+            fogScale={0.25}
+            wispSpeed={12.0}
+            wispIntensity={4.0}
+            flowStrength={0.3}
+            decay={1.0}
+            falloffStart={1.5}
+            fogFallSpeed={0.5}
+            mouseTiltStrength={0.02}
+          />
+        </div>
+
+        {/* Terminal directly below laser */}
+        <div
+          className="terminal-section"
+          onMouseEnter={() => setOnTerminal(true)}
+          onMouseLeave={() => setOnTerminal(false)}
+        >
+          <div className="terminal-wrapper">
+            <Terminal />
+          </div>
         </div>
       </div>
     </div>
