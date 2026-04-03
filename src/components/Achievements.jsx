@@ -1,98 +1,90 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Achievements.css';
 
-const RARITY = {
-  legendary: { label: 'LEGENDARY', color: '#FFD700', glow: 'rgba(255,215,0,0.4)' },
-  epic:      { label: 'EPIC',      color: '#c084fc', glow: 'rgba(192,132,252,0.4)' },
-  rare:      { label: 'RARE',      color: '#60a5fa', glow: 'rgba(96,165,250,0.4)'  },
-  uncommon:  { label: 'UNCOMMON',  color: '#4ecdc4', glow: 'rgba(78,205,196,0.4)'  },
+// Portfolio-consistent category system
+const CATEGORY = {
+  cert:        { label: 'CERTIFICATION', color: '#4ecdc4' },
+  competition: { label: 'COMPETITION',   color: '#9333ea' },
+  performance: { label: 'PERFORMANCE',   color: '#FF79C6' },
+  milestone:   { label: 'MILESTONE',     color: 'rgba(255,255,255,0.45)' },
 };
 
 const ACHIEVEMENTS = [
   {
     id: 'aws',
     icon: '☁',
-    rarity: 'legendary',
+    category: 'cert',
+    featured: true,
     title: 'AWS Certified',
     subtitle: 'Solutions Architect – Professional',
     year: '2025',
-    detail: 'Achieved the highest-tier cloud architecture certification from Amazon Web Services.',
+    detail: 'Achieved the highest-tier cloud architecture certification from Amazon Web Services, validating deep expertise across cloud design, security, and scalability.',
     link: 'https://cp.certmetrics.com/amazon/en/public/verify/credential/049c6227320b42838f413f22c93a4bf8',
     linkLabel: 'Verify Certificate',
     issuer: 'Amazon Web Services',
-    xp: 5000,
   },
   {
     id: 'igt',
     icon: '🎪',
-    rarity: 'epic',
+    category: 'performance',
     title: "India's Got Talent",
     subtitle: 'Semifinalist – Season 5',
     year: '',
     detail: 'Reached the national semifinals competing in Acrobatics & Gymnastics on live television.',
-    xp: 3500,
   },
   {
     id: 'yoga',
     icon: '🧘',
-    rarity: 'epic',
+    category: 'performance',
     title: 'National Yoga',
     subtitle: '2nd Place – National Competition',
     year: '',
-    detail: 'Secured 2nd place at the National Yoga Competition — a testament to discipline beyond code.',
-    xp: 3200,
+    detail: 'Secured 2nd place at the National Yoga Competition — discipline beyond code.',
   },
   {
     id: 'zuno',
     icon: '🥈',
-    rarity: 'epic',
+    category: 'competition',
     title: 'Zuno Fellowship',
     subtitle: 'Silver Winner 2023',
     year: '2023',
-    detail: 'Ranked 202nd globally across thousands of participants in the prestigious Zuno Fellowship Program.',
-    xp: 2800,
+    detail: 'Ranked 202nd globally across thousands of participants in the Zuno Fellowship Program.',
   },
   {
     id: 'leetcode',
     icon: '⚡',
-    rarity: 'rare',
+    category: 'competition',
     title: 'LeetCode Elite',
     subtitle: 'Top 5% Globally',
     year: '',
     detail: 'Highest rating 1880 · Ranked 1143 out of 21,000+ in Weekly Contest 335.',
-    xp: 2200,
   },
   {
     id: 'problems',
     icon: '💻',
-    rarity: 'uncommon',
+    category: 'milestone',
     title: 'Problem Solver',
-    subtitle: '1000+ Problems Solved',
+    subtitle: '1000+ Solved',
     year: '',
-    detail: 'Over a thousand algorithmic challenges conquered across LeetCode, CodeChef, and beyond.',
-    xp: 1500,
+    detail: 'Over a thousand algorithmic challenges across LeetCode, CodeChef, and beyond.',
   },
   {
     id: 'codechef',
     icon: '⭐',
-    rarity: 'uncommon',
+    category: 'competition',
     title: '3-Star Coder',
     subtitle: 'CodeChef · Rating 1775',
     year: '',
-    detail: 'Earned the 3-star badge with a peak competitive programming rating of 1775.',
-    xp: 1500,
+    detail: 'Earned 3-star status with a peak competitive programming rating of 1775.',
   },
 ];
 
 // ── Certificate Modal ─────────────────────────────────────────────────────
 const CertificateModal = ({ achievement, onClose }) => {
-  const rarity = RARITY[achievement.rarity];
-
-  // Format credential ID from URL
+  const cat = CATEGORY[achievement.category];
   const credentialId = achievement.link?.split('/').pop() ?? '';
   const credentialFormatted = credentialId.match(/.{1,8}/g)?.join(' – ') ?? credentialId;
 
-  // Close on Escape + lock body scroll
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
@@ -109,16 +101,10 @@ const CertificateModal = ({ achievement, onClose }) => {
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       role="dialog"
       aria-modal="true"
-      aria-label={`${achievement.title} certificate`}
     >
-      <div
-        className="cert-modal"
-        style={{ '--rarity-color': rarity.color, '--rarity-glow': rarity.glow }}
-      >
-        {/* Close button */}
+      <div className="cert-modal" style={{ '--cat-color': cat.color }}>
         <button className="cert-close-x" onClick={onClose} aria-label="Close">✕</button>
 
-        {/* Ornamental header */}
         <div className="cert-ornament-top">
           <span className="cert-ornament-line" />
           <span className="cert-diamond">◆</span>
@@ -127,19 +113,15 @@ const CertificateModal = ({ achievement, onClose }) => {
 
         <p className="cert-official-label">CERTIFICATE OF ACHIEVEMENT</p>
 
-        {/* Icon */}
         <div className="cert-icon-wrap">
           <span className="cert-icon">{achievement.icon}</span>
         </div>
 
-        {/* Titles */}
         <h2 className="cert-title">{achievement.title}</h2>
         <p className="cert-subtitle">{achievement.subtitle}</p>
 
-        {/* Divider */}
         <div className="cert-hr" />
 
-        {/* Meta details */}
         <div className="cert-meta-grid">
           <div className="cert-meta-row">
             <span className="cert-meta-key">Awarded to</span>
@@ -165,21 +147,18 @@ const CertificateModal = ({ achievement, onClose }) => {
           )}
         </div>
 
-        {/* Seal */}
         <div className="cert-seal">
           <span className="cert-seal-ring" />
           <span className="cert-seal-icon">✦</span>
           <p className="cert-seal-label">VERIFIED</p>
         </div>
 
-        {/* Ornamental footer */}
         <div className="cert-ornament-top cert-ornament-bottom">
           <span className="cert-ornament-line" />
           <span className="cert-diamond">◆</span>
           <span className="cert-ornament-line" />
         </div>
 
-        {/* Actions */}
         <div className="cert-actions">
           <a
             href={achievement.link}
@@ -198,37 +177,100 @@ const CertificateModal = ({ achievement, onClose }) => {
   );
 };
 
-// ── Single holographic card ────────────────────────────────────────────────
-const AchievementCard = ({ achievement, index, onViewCert }) => {
+// ── Featured card (AWS) ───────────────────────────────────────────────────
+const FeaturedCard = ({ achievement, index, onViewCert }) => {
   const cardRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const cat = CATEGORY[achievement.category];
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setIsVisible(true); },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const num = String(index + 1).padStart(2, '0');
+
+  return (
+    <div
+      ref={cardRef}
+      className={`ach-featured${isVisible ? ' visible' : ''}`}
+      style={{ '--cat-color': cat.color, '--delay': '0s' }}
+    >
+      {/* Top accent bar */}
+      <div className="ach-top-bar" />
+
+      {/* Background number watermark */}
+      <span className="ach-num-watermark">{num}</span>
+
+      {/* Left: content */}
+      <div className="ach-featured-left">
+        <span className="ach-category-tag" style={{ color: cat.color }}>{cat.label}</span>
+        <h3 className="ach-featured-title">{achievement.title}</h3>
+        <p className="ach-featured-subtitle">{achievement.subtitle}</p>
+        {achievement.year && <span className="ach-year">{achievement.year}</span>}
+        <p className="ach-detail">{achievement.detail}</p>
+        {achievement.link && (
+          <button
+            className="ach-cert-btn"
+            onClick={() => onViewCert(achievement)}
+            style={{ '--cat-color': cat.color }}
+          >
+            {achievement.linkLabel}
+            <span className="ach-cert-arrow">↗</span>
+          </button>
+        )}
+      </div>
+
+      {/* Right: decorative icon area */}
+      <div className="ach-featured-right">
+        <div className="ach-featured-icon-wrap" style={{ '--cat-color': cat.color }}>
+          <span className="ach-featured-icon">{achievement.icon}</span>
+          <div className="ach-featured-ring ring-1" />
+          <div className="ach-featured-ring ring-2" />
+          <div className="ach-featured-ring ring-3" />
+        </div>
+        <p className="ach-featured-issuer">{achievement.issuer}</p>
+      </div>
+    </div>
+  );
+};
+
+// ── Regular card ──────────────────────────────────────────────────────────
+const AchCard = ({ achievement, index, onViewCert }) => {
+  const cardRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [shimmer, setShimmer] = useState({ x: 50, y: 50 });
   const tiltRef = useRef({ x: 0, y: 0 });
   const targetRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef(null);
+  const cat = CATEGORY[achievement.category];
 
-  // Intersection observer — trigger entrance animation
   useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setIsVisible(true); },
       { threshold: 0.15 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
-  // Lerped tilt loop
   useEffect(() => {
     const lerp = (a, b, t) => a + (b - a) * t;
     const tick = () => {
-      tiltRef.current.x = lerp(tiltRef.current.x, targetRef.current.x, 0.12);
-      tiltRef.current.y = lerp(tiltRef.current.y, targetRef.current.y, 0.12);
+      tiltRef.current.x = lerp(tiltRef.current.x, targetRef.current.x, 0.1);
+      tiltRef.current.y = lerp(tiltRef.current.y, targetRef.current.y, 0.1);
       if (cardRef.current) {
         cardRef.current.style.transform =
-          `perspective(800px) rotateX(${tiltRef.current.x}deg) rotateY(${tiltRef.current.y}deg)`;
+          `perspective(900px) rotateX(${tiltRef.current.x}deg) rotateY(${tiltRef.current.y}deg)`;
       }
       rafRef.current = requestAnimationFrame(tick);
     };
@@ -240,11 +282,9 @@ const AchievementCard = ({ achievement, index, onViewCert }) => {
     const el = cardRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
     targetRef.current = {
-      x: ((e.clientY - cy) / (rect.height / 2)) * -10,
-      y: ((e.clientX - cx) / (rect.width / 2)) * 10,
+      x: ((e.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * -8,
+      y: ((e.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 8,
     };
     setShimmer({
       x: ((e.clientX - rect.left) / rect.width) * 100,
@@ -257,16 +297,16 @@ const AchievementCard = ({ achievement, index, onViewCert }) => {
     setIsHovered(false);
   }, []);
 
-  const rarity = RARITY[achievement.rarity];
+  // Global card number (featured is #1, so these start at #2)
+  const num = String(index + 2).padStart(2, '0');
 
   return (
     <div
       ref={cardRef}
-      className={`achievement-card rarity-${achievement.rarity}${isVisible ? ' visible' : ''}${isHovered ? ' hovered' : ''}`}
+      className={`ach-card${isVisible ? ' visible' : ''}${isHovered ? ' hovered' : ''}`}
       style={{
-        '--rarity-color': rarity.color,
-        '--rarity-glow': rarity.glow,
-        '--delay': `${index * 0.09}s`,
+        '--cat-color': cat.color,
+        '--delay': `${index * 0.1}s`,
         '--shimmer-x': `${shimmer.x}%`,
         '--shimmer-y': `${shimmer.y}%`,
       }}
@@ -274,134 +314,115 @@ const AchievementCard = ({ achievement, index, onViewCert }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Top accent bar */}
+      <div className="ach-top-bar" />
+
       {/* Holographic shimmer */}
-      <div className="card-shimmer" />
+      <div className="ach-shimmer" />
 
-      {/* Corner glow accent */}
-      <div className="card-corner-glow" />
+      {/* Background number watermark */}
+      <span className="ach-num-watermark">{num}</span>
 
-      {/* Top row: rarity badge + year */}
-      <div className="card-top">
-        <span className="card-rarity-badge">{rarity.label}</span>
-        {achievement.year && <span className="card-year">{achievement.year}</span>}
-      </div>
+      {/* Category tag */}
+      <span className="ach-category-tag">{cat.label}</span>
 
       {/* Icon */}
-      <div className="card-icon-wrap">
-        <span className="card-icon">{achievement.icon}</span>
+      <div className="ach-icon-row">
+        <span className="ach-icon">{achievement.icon}</span>
+        {achievement.year && <span className="ach-year">{achievement.year}</span>}
       </div>
 
-      {/* Text */}
-      <h3 className="card-title">{achievement.title}</h3>
-      <p className="card-subtitle">{achievement.subtitle}</p>
-      <p className="card-detail">{achievement.detail}</p>
+      {/* Titles */}
+      <h3 className="ach-title">{achievement.title}</h3>
+      <p className="ach-subtitle">{achievement.subtitle}</p>
+      <p className="ach-detail">{achievement.detail}</p>
 
       {/* Footer */}
-      <div className="card-footer">
+      <div className="ach-footer">
         {achievement.link ? (
           <button
-            className="card-link"
+            className="ach-link-btn"
             onClick={(e) => { e.stopPropagation(); onViewCert(achievement); }}
           >
             {achievement.linkLabel} ↗
           </button>
-        ) : (
-          <span />
-        )}
-        <span className="card-xp">+{achievement.xp.toLocaleString()} XP</span>
+        ) : <span />}
       </div>
     </div>
   );
 };
 
-// ── Main section ───────────────────────────────────────────────────────────
+// ── Main section ──────────────────────────────────────────────────────────
 const Achievements = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [certModal, setCertModal] = useState(null); // achievement object | null
+  const [certModal, setCertModal] = useState(null);
   const sectionRef = useRef(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setIsVisible(true); },
       { threshold: 0.05 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
-  const totalXP = ACHIEVEMENTS.reduce((sum, a) => sum + a.xp, 0);
-  const legendaryCount = ACHIEVEMENTS.filter(a => a.rarity === 'legendary').length;
+  const featured = ACHIEVEMENTS.filter(a => a.featured);
+  const regular  = ACHIEVEMENTS.filter(a => !a.featured);
 
   return (
     <div className="achievements-page" ref={sectionRef}>
-      {/* Subtle dot-grid background */}
-      <div className="achievements-bg-grid" />
+
+      {/* Ambient glow blobs (match portfolio style) */}
+      <div className="ach-ambient-1" />
+      <div className="ach-ambient-2" />
 
       <div className={`achievements-content${isVisible ? ' animate-in' : ''}`}>
 
-        {/* Header */}
+        {/* ── Header ── */}
         <header className="achievements-header">
           <h2 className="achievements-title">
             <span className="a-title-line">ACHIEVE</span>
             <span className="a-title-line a-title-highlight">MENTS</span>
           </h2>
-          <p className="achievements-subtitle">Certifications, rankings &amp; milestones</p>
+          <p className="achievements-subtitle">
+            Certifications, rankings &amp; milestones
+          </p>
 
-          {/* Stats bar */}
-          <div className="achievements-stats">
-            <div className="stat-item">
-              <span className="stat-value">{ACHIEVEMENTS.length}</span>
-              <span className="stat-label">Unlocked</span>
-            </div>
-            <span className="stat-divider" />
-            <div className="stat-item">
-              <span className="stat-value">{totalXP.toLocaleString()}</span>
-              <span className="stat-label">Total XP</span>
-            </div>
-            <span className="stat-divider" />
-            <div className="stat-item">
-              <span className="stat-value stat-legendary">{legendaryCount} ★</span>
-              <span className="stat-label">Legendary</span>
-            </div>
-            <span className="stat-divider" />
-            <div className="stat-item">
-              <span className="stat-value stat-rank">ELITE</span>
-              <span className="stat-label">Rank</span>
-            </div>
+          {/* Minimal meta strip */}
+          <div className="ach-meta-strip">
+            {Object.entries(CATEGORY).map(([key, val]) => {
+              const count = ACHIEVEMENTS.filter(a => a.category === key).length;
+              return count > 0 ? (
+                <span key={key} className="ach-meta-pill" style={{ '--mc': val.color }}>
+                  <span className="ach-meta-dot" />
+                  {val.label}
+                  <span className="ach-meta-count">{count}</span>
+                </span>
+              ) : null;
+            })}
           </div>
         </header>
 
-        {/* Rarity legend */}
-        <div className="rarity-legend">
-          {Object.entries(RARITY).map(([key, val]) => (
-            <span key={key} className="legend-item" style={{ '--rc': val.color }}>
-              <span className="legend-pip" />
-              {val.label}
-            </span>
+        {/* ── Featured card ── */}
+        {featured.map((a, i) => (
+          <FeaturedCard key={a.id} achievement={a} index={i} onViewCert={setCertModal} />
+        ))}
+
+        {/* ── Grid ── */}
+        <div className="ach-grid">
+          {regular.map((a, i) => (
+            <AchCard key={a.id} achievement={a} index={i} onViewCert={setCertModal} />
           ))}
         </div>
 
-        {/* Card grid */}
-        <div className="achievements-grid">
-          {ACHIEVEMENTS.map((achievement, i) => (
-            <AchievementCard
-              key={achievement.id}
-              achievement={achievement}
-              index={i}
-              onViewCert={setCertModal}
-            />
-          ))}
-        </div>
       </div>
 
       {/* Certificate modal */}
       {certModal && (
-        <CertificateModal
-          achievement={certModal}
-          onClose={() => setCertModal(null)}
-        />
+        <CertificateModal achievement={certModal} onClose={() => setCertModal(null)} />
       )}
     </div>
   );
