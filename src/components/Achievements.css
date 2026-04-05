@@ -154,71 +154,65 @@
   flex-direction: column;
   justify-content: center;
   min-height: 0;
-  padding: 16px 0 40px;
+  padding: 0 0 40px;
 }
 
-/* ── The achievement slide — glass card, centered ────────────────────────── */
+/* ── The achievement slide — open, no card ────────────────────────────────── */
 .ach-slide {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 56px;
-  align-items: start;
-  padding: 40px 48px 36px 52px;
+  flex: 1;
+  display: flex;
+  align-items: center;
   overflow: visible;
-
-  /* Subtle glass card */
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-left: none;
-  border-radius: 0 20px 20px 0;
 }
 
-/* Left accent bar */
-.ach-slide::before {
+/* ── Big nanobot icon — upper right ──────────────────────────────────────── */
+.ach-nanobot-area {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-60%);
+  z-index: 0;
+  opacity: 0.75;
+}
+
+.ach-nanobot-canvas {
+  width: 280px;
+  height: 280px;
+}
+
+/* ── Left content ─────────────────────────────────────────────────────────── */
+.ach-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 620px;
+  padding-left: 28px;
+}
+
+/* Left accent line */
+.ach-content::before {
   content: '';
   position: absolute;
   left: 0; top: 0; bottom: 0;
-  width: 4px;
+  width: 3px;
   background: linear-gradient(
     180deg,
     var(--cat-color) 0%,
-    color-mix(in srgb, var(--cat-color) 35%, transparent) 70%,
+    color-mix(in srgb, var(--cat-color) 30%, transparent) 70%,
     transparent 100%
   );
-  border-radius: 2px 0 0 2px;
-  box-shadow: 0 0 14px color-mix(in srgb, var(--cat-color) 30%, transparent);
+  border-radius: 2px;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cat-color) 28%, transparent);
   transition: background 0.45s ease, box-shadow 0.45s ease;
-}
-
-/* Giant watermark number */
-.ach-slide-bg-num {
-  position: absolute;
-  right: 16px;
-  bottom: -10px;
-  font-size: clamp(8rem, 16vw, 14rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  color: rgba(255,255,255,0.06);
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-
-/* ── Left column ─────────────────────────────────────────────────────────── */
-.ach-col-left {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1;
 }
 
 .ach-tags-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .ach-tags-sep {
@@ -227,7 +221,6 @@
   line-height: 1;
 }
 
-/* Category pill */
 .ach-slide-cat {
   display: inline-block;
   font-size: 0.6rem;
@@ -235,13 +228,13 @@
   letter-spacing: 0.22em;
   color: var(--cat-color);
   text-transform: uppercase;
-  border: 1px solid color-mix(in srgb, var(--cat-color) 35%, transparent);
+  background: color-mix(in srgb, var(--cat-color) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-color) 30%, transparent);
   border-radius: 3px;
-  padding: 3px 9px;
-  transition: color 0.45s ease, border-color 0.45s ease;
+  padding: 4px 10px;
+  transition: color 0.45s ease, border-color 0.45s ease, background 0.45s ease;
 }
 
-/* Year */
 .ach-slide-year {
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.68rem;
@@ -249,27 +242,27 @@
   letter-spacing: 0.08em;
 }
 
-/* ── Giant title ─────────────────────────────────────────────────────────── */
 .ach-slide-title {
-  font-size: clamp(3.2rem, 6.5vw, 6rem);
+  /* font-size: clamp(3.2rem, 6.5vw, 6rem); */
+  font-size: 65px;
   font-weight: 100;
   letter-spacing: 0.02em;
   line-height: 1.0;
   color: #fff;
-  margin: 0 0 18px;
+  margin: 0 0 16px;
   max-width: 14ch;
+  text-shadow: 0 0 60px rgba(255,255,255,0.06);
 }
 
-/* ── Subtitle ─────────────────────────────────────────────────────────────── */
 .ach-slide-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 300;
   color: var(--cat-color);
   margin: 0 0 24px;
   letter-spacing: 0.03em;
+  text-shadow: 0 0 30px color-mix(in srgb, var(--cat-color) 25%, transparent);
 }
 
-/* ── Divider ──────────────────────────────────────────────────────────────── */
 .ach-slide-divider {
   height: 1px;
   width: 100%;
@@ -280,55 +273,41 @@
     rgba(255,255,255,0.05) 45%,
     transparent 100%
   );
-  margin-bottom: 24px;
+  margin-bottom: 22px;
   transition: background 0.45s ease;
 }
 
-/* ── Detail text ─────────────────────────────────────────────────────────── */
 .ach-slide-detail {
   font-size: 0.95rem;
-  color: rgba(255,255,255,0.58);
+  color: rgba(255,255,255,0.55);
   line-height: 1.8;
   margin: 0;
   font-weight: 300;
-  max-width: 560px;
+  max-width: 540px;
 }
 
-/* ── Right column ─────────────────────────────────────────────────────────── */
-.ach-col-right {
+/* ── Actions row (issuer + cert button) ──────────────────────────────────── */
+.ach-slide-actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 28px;
-  padding-top: 8px;
-  position: relative;
-  z-index: 1;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
-/* ── Nano-bot particle canvas ─────────────────────────────────────────────── */
-.ach-nanobot-canvas {
-  width: 140px;
-  height: 140px;
-  flex-shrink: 0;
-}
-
-/* ── Issuer ──────────────────────────────────────────────────────────────── */
 .ach-slide-issuer {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 300;
   letter-spacing: 0.14em;
   color: rgba(255,255,255,0.28);
   text-transform: uppercase;
-  margin: 0;
-  line-height: 1.5;
 }
 
-/* ── Certificate button ──────────────────────────────────────────────────── */
 .ach-slide-cert-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 22px;
+  padding: 9px 20px;
   border: 1px solid color-mix(in srgb, var(--cat-color) 45%, transparent);
   border-radius: 8px;
   background: color-mix(in srgb, var(--cat-color) 8%, transparent);
@@ -346,8 +325,20 @@
 .ach-cert-arrow { transition: transform 0.2s ease; }
 .ach-slide-cert-btn:hover .ach-cert-arrow { transform: translate(2px, -2px); }
 
-.ach-slide-cert-btn.btn-out { animation: scOut 0.38s ease-in 0s both; }
-.ach-slide-cert-btn.btn-in  { animation: scIn 0.55s cubic-bezier(0.34, 1.15, 0.64, 1) 0.25s both; }
+/* ── Counter — bottom right, big single number ───────────────────────────── */
+.ach-slide-counter {
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: clamp(10rem, 22vw, 18rem);
+  font-weight: 800;
+  color: rgba(255,255,255,0.05);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  user-select: none;
+}
 
 /* ── Clean fade for non-scatter elements ──────────────────────────────────── */
 .ach-fade {
@@ -719,28 +710,20 @@
 @media (max-width: 860px) {
   .ach-sticky-inner { padding: 0 24px; }
   .ach-main-title { font-size: 2.6rem; }
-  .ach-slide {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 28px 28px 28px 32px;
-  }
-  .ach-col-right {
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 18px;
-  }
-  .ach-slide-bg-num { font-size: 8rem; right: 8px; bottom: -8px; }
+  .ach-nanobot-canvas { width: 180px; height: 180px; }
+  .ach-nanobot-area { opacity: 0.5; }
+  .ach-content { max-width: 100%; }
+  .ach-slide-counter { font-size: clamp(4rem, 10vw, 7rem); }
 }
 
 @media (max-width: 540px) {
   .ach-sticky-inner { padding: 0 18px; }
   .ach-main-title { font-size: 2rem; letter-spacing: 0.16em; }
-  .ach-counter-num { font-size: 1.5rem; }
-  .ach-slide { padding: 22px 0 20px 22px; gap: 24px; }
+  .ach-nanobot-area { display: none; }
+  .ach-content { padding-left: 20px; }
   .ach-slide-subtitle { font-size: 0.95rem; }
   .ach-slide-detail { font-size: 0.87rem; }
-  .ach-slide-bg-num { display: none; }
+  .ach-slide-counter { display: none; }
   .cert-modal { padding: 28px 20px 22px; }
   .cert-actions { flex-direction: column; }
   .cert-verify-btn, .cert-dismiss-btn { width: 100%; justify-content: center; }

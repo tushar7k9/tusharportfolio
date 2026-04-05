@@ -70,7 +70,7 @@ const ACHIEVEMENTS = [
     subtitle: '1800+ Solved',
     year: '',
     detail: 'Over 1800 algorithmic challenges conquered across multiple platforms.',
-    visual: { type: 'bar', value: 1800, max: 2000, label: 'Problems Solved' },
+    visual: { type: 'rank', value: 1800, label: 'Problems Solved', context: 'out of thousands' },
   },
   {
     id: 'codechef',
@@ -238,44 +238,45 @@ const NanoBotIcon = ({ icon, phase, color }) => {
     return m ? { r: +m[0], g: +m[1], b: +m[2] } : { r: 255, g: 255, b: 255 };
   }, [color]);
 
+  const CANVAS_SIZE = 280;
+
   // Sample emoji pixels → target positions
   const targets = useMemo(() => {
-    const size = 64;
+    const size = 80;
     const off  = document.createElement('canvas');
     off.width = size; off.height = size;
     const ctx = off.getContext('2d');
-    ctx.font = `${size * 0.78}px serif`;
+    ctx.font = `${size * 0.72}px serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(icon, size / 2, size / 2);
 
     const data   = ctx.getImageData(0, 0, size, size).data;
     const points = [];
-    const step   = 2; // sample every 2px
+    const step   = 2;
     for (let y = 0; y < size; y += step) {
       for (let x = 0; x < size; x += step) {
         if (data[(y * size + x) * 4 + 3] > 100) {
-          points.push({ x: (x / size) * 140, y: (y / size) * 140 });
+          points.push({ x: (x / size) * CANVAS_SIZE, y: (y / size) * CANVAS_SIZE });
         }
       }
     }
-    // If too many, randomly thin
-    while (points.length > 300) points.splice(Math.floor(Math.random() * points.length), 1);
+    while (points.length > 450) points.splice(Math.floor(Math.random() * points.length), 1);
     return points;
-  }, [icon]);
+  }, [icon, CANVAS_SIZE]);
 
   // Init particles
   useEffect(() => {
     const ps = targets.map(t => ({
-      x:  Math.random() * 140,
-      y:  Math.random() * 140,
+      x:  Math.random() * CANVAS_SIZE,
+      y:  Math.random() * CANVAS_SIZE,
       tx: t.x, ty: t.y,
       vx: 0, vy: 0,
-      size: Math.random() * 1.5 + 0.6,
+      size: Math.random() * 1.8 + 0.7,
       alpha: 0,
     }));
     particlesRef.current = ps;
-  }, [targets]);
+  }, [targets, CANVAS_SIZE]);
 
   // Track phase changes
   useEffect(() => {
@@ -283,18 +284,16 @@ const NanoBotIcon = ({ icon, phase, color }) => {
     phaseRef.current = phase;
 
     if (phase === 'exit') {
-      // Give each particle a random outward velocity
       particlesRef.current.forEach(p => {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 3 + 1.5;
+        const speed = Math.random() * 4 + 2;
         p.vx = Math.cos(angle) * speed;
         p.vy = Math.sin(angle) * speed;
       });
     } else if (phase === 'enter') {
-      // Scatter particles to random positions, they'll spring to targets
       particlesRef.current.forEach(p => {
-        p.x     = Math.random() * 140;
-        p.y     = Math.random() * 140;
+        p.x     = Math.random() * CANVAS_SIZE;
+        p.y     = Math.random() * CANVAS_SIZE;
         p.alpha = 0;
         p.vx    = 0;
         p.vy    = 0;
@@ -307,10 +306,10 @@ const NanoBotIcon = ({ icon, phase, color }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    canvas.width = 140; canvas.height = 140;
+    canvas.width = CANVAS_SIZE; canvas.height = CANVAS_SIZE;
 
     const draw = () => {
-      ctx.clearRect(0, 0, 140, 140);
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
       const ph = phaseRef.current;
 
       particlesRef.current.forEach(p => {
@@ -451,19 +450,21 @@ const AchVisual = ({ visual, phase }) => {
   return null;
 };
 
-// ── Achievement Slide — editorial two-column layout ──────────────────────
-const AchievementSlide = ({ achievement, phase, onViewCert, slideIndex }) => {
+// ── Achievement Slide — open layout, no card ─────────────────────────────
+const AchievementSlide = ({ achievement, phase, onViewCert, slideIndex, total }) => {
   const cat   = CATEGORY[achievement.category];
   const num   = String(slideIndex + 1).padStart(2, '0');
   const fadeCls = phase === 'exit' ? 'ach-fade fade-out' : phase === 'enter' ? 'ach-fade fade-in' : 'ach-fade';
 
   return (
     <div className="ach-slide" style={{ '--cat-color': cat.color }}>
-      {/* Giant background watermark number */}
-      <span className="ach-slide-bg-num">{num}</span>
+      {/* ── Big nanobot icon — upper right ── */}
+      <div className="ach-nanobot-area">
+        <NanoBotIcon icon={achievement.icon} phase={phase} color={cat.color} />
+      </div>
 
-      {/* ── Left column ── */}
-      <div className="ach-col-left">
+      {/* ── Left content ── */}
+      <div className="ach-content">
         <div className="ach-tags-row">
           <ScatterText text={cat.label} phase={phase} tag="span" className="ach-slide-cat" baseDelay={0} />
           {achievement.year && (
@@ -474,7 +475,6 @@ const AchievementSlide = ({ achievement, phase, onViewCert, slideIndex }) => {
           )}
         </div>
 
-        {/* Only the title gets the dramatic scatter effect */}
         <ScatterText
           text={achievement.title}
           phase={phase}
@@ -483,7 +483,6 @@ const AchievementSlide = ({ achievement, phase, onViewCert, slideIndex }) => {
           baseDelay={0.03}
         />
 
-        {/* Subtitle, detail, divider — clean fade transitions */}
         <p className={`ach-slide-subtitle ${fadeCls}`} style={{ '--fade-delay': '0.08s' }}>
           {achievement.subtitle}
         </p>
@@ -494,33 +493,28 @@ const AchievementSlide = ({ achievement, phase, onViewCert, slideIndex }) => {
           {achievement.detail}
         </p>
 
-        {/* Unique visual element per achievement */}
         {achievement.visual && (
           <AchVisual visual={achievement.visual} phase={phase} />
         )}
+
+        {/* Issuer + cert button inline */}
+        <div className={`ach-slide-actions ${fadeCls}`} style={{ '--fade-delay': '0.2s' }}>
+          {achievement.issuer && (
+            <span className="ach-slide-issuer">{achievement.issuer}</span>
+          )}
+          {achievement.link && (
+            <button className="ach-slide-cert-btn" onClick={() => onViewCert(achievement)}>
+              {achievement.linkLabel}
+              <span className="ach-cert-arrow">↗</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* ── Right column ── */}
-      <div className="ach-col-right">
-        <NanoBotIcon icon={achievement.icon} phase={phase} color={cat.color} />
-
-        {achievement.issuer && (
-          <p className={`ach-slide-issuer ${fadeCls}`} style={{ '--fade-delay': '0.14s' }}>
-            {achievement.issuer}
-          </p>
-        )}
-
-        {achievement.link && (
-          <button
-            className={`ach-slide-cert-btn ${fadeCls}`}
-            style={{ '--fade-delay': '0.18s' }}
-            onClick={() => onViewCert(achievement)}
-          >
-            {achievement.linkLabel}
-            <span className="ach-cert-arrow">↗</span>
-          </button>
-        )}
-      </div>
+      {/* ── Counter — bottom right, just the current number ── */}
+      <span className={`ach-slide-counter ${fadeCls}`} style={{ '--fade-delay': '0.05s' }}>
+        {num}
+      </span>
     </div>
   );
 };
@@ -665,6 +659,7 @@ const Achievements = () => {
               key={displayIndex}
               achievement={ACHIEVEMENTS[displayIndex]}
               slideIndex={displayIndex}
+              total={N}
               phase={phase}
               onViewCert={setCertModal}
             />

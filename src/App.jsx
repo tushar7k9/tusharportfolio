@@ -9,6 +9,7 @@ import homePreview from './assets/previews/home.png'
 import aboutPreview from './assets/previews/about.png'
 import skillsPreview from './assets/previews/skills.png'
 import experiencePreview from './assets/previews/experience.png'
+import achievementsPreview from './assets/previews/achievements.png'
 import contactPreview from './assets/previews/contact.png'
 import './App.css'
 
@@ -17,7 +18,7 @@ const SECTIONS = [
   { id: 'about',        label: 'About',        color: '#9333ea', preview: aboutPreview },
   { id: 'skills',       label: 'Skills',       color: '#4ecdc4', preview: skillsPreview },
   { id: 'experience',   label: 'Work',         color: '#FF79C6', preview: experiencePreview },
-  { id: 'achievements', label: 'Awards',       color: '#FFD700', preview: null },
+  { id: 'achievements', label: 'Awards',       color: '#FFD700', preview: achievementsPreview },
   { id: 'contact',      label: 'Contact',      color: '#ff6b6b', preview: contactPreview },
 ]
 
